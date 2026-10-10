@@ -287,7 +287,7 @@ h2{font:700 12px/1 var(--pixel);letter-spacing:.04em;text-transform:uppercase;co
 .goals .rq[aria-pressed="true"]{border-color:var(--acc);color:var(--text)}
 .gantt{position:relative;border:2px solid var(--line);border-radius:3px;background:var(--bg);padding:6px 12px 10px}
 #planlines{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
-.g-axis,.g-row{display:grid;grid-template-columns:minmax(150px,210px) minmax(0,1fr) 92px;gap:10px;align-items:center}
+.g-axis,.g-row{display:grid;grid-template-columns:minmax(150px,210px) minmax(0,1fr) 104px;gap:10px;align-items:center}
 .g-axis{font:10px var(--mono);color:var(--faint);padding:4px 0 6px;border-bottom:1px solid var(--line)}
 .g-ticks{position:relative;height:14px}
 .g-ticks span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
@@ -310,7 +310,7 @@ h2{font:700 12px/1 var(--pixel);letter-spacing:.04em;text-transform:uppercase;co
 .plan-note b{color:var(--text)}
 .plan-empty{padding:18px;text-align:center;color:var(--muted);background:var(--panel2);border:2px solid var(--line);border-radius:3px}
 @media (max-width:640px){
-  .g-axis,.g-row{grid-template-columns:minmax(0,1fr) 78px;gap:4px 8px}
+  .g-axis,.g-row{grid-template-columns:minmax(0,1fr) 96px;gap:4px 8px}
   .g-axis>span:first-child{display:none}
   .g-name{grid-column:1/-1}
   .g-track{grid-column:1}
@@ -2190,7 +2190,7 @@ function tabPlan(){
     <div><small>Research needed</small><b>${fmt(P.cost)}</b><span>${fmt(S.res.rp)} banked · +${fmt(P.rate)}/mo</span></div></div>`;
   if(!(P.rate>0)&&S.res.rp<P.cost) return head+goals+sum+`<div class="plan-empty">You aren't producing research yet, so there's no schedule to show. Build a Tinker's Workshop to start earning research points.</div>`;
   const span=P.total>0&&isFinite(P.total)?P.total:1;
-  const ticks=[0,.25,.5,.75,1].map(f=>`<span style="left:${f*100}%">${f===0?'Today':'Day '+moDays(span*f).toLocaleString()}</span>`).join('');
+  const ticks=[0,.25,.5,.75,1].map(f=>`<span style="left:${f*100}%">${dateAfter(span*f)}</span>`).join('');
   const rows=P.order.map((id,i)=>{ const a=P.at[id], tt=TECHS[id], c=FIELDS[tt.f][1], crit=P.crit.has(id), now=a.dur===0;
     const left=a.start/span*100, w=Math.max(.6,a.dur/span*100);
     const reqs=tt.req.filter(r=>!T(r)).map(r=>TECHS[r].name);
@@ -2200,7 +2200,7 @@ function tabPlan(){
       <div class="g-name"><i style="background:${c}"></i><div>${i+1}. ${tt.name} ${crit?'<span class="tag crit">critical</span>':''}${btn}
         <small>${fmt(tt.cost)} RP${boost?` · +${Math.round(boost*100)}% research after`:''}${reqs.length?` · after ${reqs.join(', ')}`:''}</small></div></div>
       <div class="g-track"><div class="g-bar" data-bar="${id}" style="left:${left}%;width:${Math.min(w,100-left)}%;background:${c}"></div></div>
-      <div class="g-days">${now?'<b>ready</b>':`<b>${fmtDays(a.dur)}</b>`}<br>day ${moDays(a.finish).toLocaleString()}</div></div>`; }).join('');
+      <div class="g-days">${now?'<b>ready</b>':`<b>${fmtDays(a.dur)}</b>`}<br>${dateAfter(a.finish)}</div></div>`; }).join('');
   const note=`<p class="plan-note">Research points come from one shared pool, so discoveries happen one after another. The schedule puts discoveries that <b>boost research</b> first, because they speed up everything after them. The <b>critical</b> rows are the longest chain of prerequisites leading to ${t.name}. Times use your current research rate of <b>${fmt(P.rate)}/mo</b> and change as you build.${saved>0?` One more Tinker's Workshop would save about <b>${saved.toLocaleString()} days</b>.`:''}</p>`;
   return head+goals+sum+`<div class="gantt" id="gantt"><svg id="planlines" data-keep aria-hidden="true"></svg>
     <div class="g-axis"><span>Discovery</span><div class="g-ticks">${ticks}</div><span style="text-align:right">Duration</span></div>${rows}</div>`+note;
