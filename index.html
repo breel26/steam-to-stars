@@ -1790,7 +1790,7 @@ function renderBanner(){
   const chips=keys.map(k=>{ const d=delta(k), v=S.res[k]||0;
     return `<button class="rc ${d<-0.05&&v+d*3<0?'alert':''}" data-act="resinfo" data-k="${k}" title="${RES[k]}: ${fmt(v)}, ${fmtRate(d)} per month"><span class="n">${SHORT[k]||RES[k]}</span>${fmt(v)}<span class="d ${d>0.05?'pos':d<-0.05?'neg':''}">${fmtRate(d)}</span></button>`; }).join('');
   const avail=Object.keys(TECHS).filter(id=>techState(id)==='ready').length;
-  const nav=[['map','Map'],['research','Research',avail],['colony','Colony'],['launch','Launch']];
+  const nav=[['colony','Colony'],['map','Map'],['research','Research',avail],['launch','Launch']];
   put('banner',`<div class="bn-row top">
     <div class="bn-brand">${icon('logo')}<b>Steam <span>to</span> Stars</b></div>
     <div class="bn-date" title="${ERAS[S.era]}"><span class="mon">${MONTHS[S.month%12].toUpperCase()} ${(S.day||0)+1}</span><span class="yr">${yearOf(S.month)}</span><span class="era">${ERAS[S.era]}</span></div>
