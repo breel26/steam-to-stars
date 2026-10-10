@@ -1074,6 +1074,10 @@ function genWorld(seed){
         for(const gap of [3,2,1]) for(const i of cand){ if(n>=v) break; if(DEPAT.has(i)||near(i,gap)) continue; DEPAT.set(i,DEPT.length); DEPT.push({i,k,rid:id}); n++; }
         if(n) reg.dep[k]=(reg.dep[k]||0)+n; } } }
   for(const id of EARTH){ RESV.add(RT[id].anchor); for(const p of RT[id].plots) RESV.add(p); }
+  // every open land tile can take a building: not the town square, the river, or a deposit site
+  for(const id of EARTH){ if(REG[id].bk==='ocean'){ REG[id].plots=0; continue; }
+    RT[id].open=RT[id].tiles.filter(i=>i!==RT[id].anchor&&!TL[i].oc&&!RIVER.has(i)&&!DEPAT.has(i));
+    REG[id].plots=RT[id].open.length; }
   for(const d of DEPT) RESV.add(d.i);
   // ---- region outlines (world pixels) ----
   for(const id of EARTH){ const Rg=RT[id]; let d='';
@@ -1586,6 +1590,7 @@ function tileWhy(id,i){
   if(occupied(i)) return 'Something is already built there.';
   if(d.deposit){ if(!openSite(i,d.deposit)) return `Click an open ${DEPOSITS[d.deposit].toLowerCase()} site (the glowing icons).`; }
   else if(DEPAT.has(i)) return S.found.includes(DEPAT.get(i))?'That spot is a deposit site. Save it for a mine.':'Something glints there. Drive next to it first.';
+  else if(RIVER.has(i)) return 'Nothing can be built on the river except a Hydroelectric Dam.';
   return null;
 }
 function snapTile(id,i){ // extractors: forgive a click one tile away from the site
@@ -1598,7 +1603,7 @@ function autoTile(id,rid){ // used by "Build here" buttons and old saves
   if(REG[rid].where!=='earth') return null; const d=B[id], R=RT[rid];
   if(d.deposit){ const s=foundOf(rid,d.deposit).map(j=>DEPT[j].i).find(i=>!occupied(i)); if(s!=null) return s; }
   else { const p=R.plots.find(i=>!occupied(i)&&!DEPAT.has(i)); if(p!=null) return p; }
-  const f=R.tiles.find(i=>!occupied(i)&&!DEPAT.has(i)); return f==null?null:f;
+  const f=R.tiles.find(i=>!occupied(i)&&!DEPAT.has(i)&&!RIVER.has(i)&&i!==R.anchor); return f==null?null:f;
 }
 function syncTiles(){ // make sure every Earth building and scaffold has a tile
   if(!S.at) S.at={};
