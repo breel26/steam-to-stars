@@ -570,6 +570,73 @@ button.rc{font:inherit;font:12px var(--mono);color:inherit;cursor:pointer}
   .banner .bn-date .yr{font-size:16px}
 }
 @media (max-width:520px){ .banner .bn-speed button{padding:3px 7px;font-size:11px} .banner .bn-tabs button{flex:1;justify-content:center;padding:9px 4px 8px} }
+
+/* ===== Supply chain screen ===== */
+#scr-chain{--m-font:"Inter","Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;--m-card:#1c1a17;--m-card2:#24211d;--m-edge:rgba(255,255,255,.07);--m-edge2:rgba(255,255,255,.12);
+  font-family:var(--m-font);font-feature-settings:"tnum" 1;background:radial-gradient(1200px 600px at 20% -10%,var(--acc-soft),transparent 60%),var(--bg)}
+#scr-chain .h1{font:700 28px/1.1 var(--m-font);letter-spacing:-.02em;text-transform:none}
+#scr-chain .lead{color:var(--muted);font-size:14px;margin:-4px 0 4px;max-width:70ch}
+.ch-card{background:var(--m-card);border:1px solid var(--m-edge);border-radius:14px;box-shadow:0 1px 2px rgba(0,0,0,.35),0 8px 24px rgba(0,0,0,.25);padding:16px}
+.ch-target{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.ch-target .ico{width:40px;height:40px;border-radius:10px;background:var(--m-card2);display:grid;place-items:center;flex:none}
+.ch-target .ico img{width:32px;height:32px}
+.ch-target h2{margin:0;font:700 24px/1.1 var(--m-font);letter-spacing:-.01em;text-transform:none;color:var(--text)}
+.ch-target .kind{font:600 11px var(--m-font);letter-spacing:.06em;text-transform:uppercase;color:var(--faint)}
+.ch-target .grow{flex:1}
+.ch-btn{border:1px solid var(--m-edge2);border-radius:99px;padding:7px 14px;font:500 13px var(--m-font);background:rgba(255,255,255,.03);color:var(--text)}
+.ch-btn:hover{background:rgba(255,255,255,.08)}
+.ch-btn[aria-pressed="true"]{background:var(--acc);border-color:var(--acc);color:var(--acc-ink)}
+.ch-quick{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.ch-quick .lbl,.ch-pick h4{font:600 11px var(--m-font);letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin:0 4px 0 0}
+.ch-quick button,.ch-pick button{border:1px solid var(--m-edge2);border-radius:99px;padding:5px 11px;font:500 12.5px var(--m-font);background:var(--m-card2);color:var(--muted)}
+.ch-quick button:hover,.ch-pick button:hover{color:var(--text)}
+.ch-quick button[aria-pressed="true"],.ch-pick button[aria-pressed="true"]{border-color:var(--acc);color:var(--text);background:var(--acc-soft)}
+.ch-pick{display:grid;gap:12px}
+.ch-pick h4{margin:0 0 6px}
+.ch-pick .set{display:flex;flex-wrap:wrap;gap:6px}
+.ch-pick button.dim{opacity:.5}
+.ch-sum{display:grid;gap:8px}
+.ch-sum h3{margin:0;font:600 14px var(--m-font);color:var(--text)}
+.ch-ok{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:10px;background:rgba(140,199,132,.1);color:var(--good);font-size:14px}
+.ch-blk{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 10px;padding:10px 12px;border-radius:10px;background:rgba(229,110,87,.08);border:1px solid rgba(229,110,87,.25)}
+.ch-blk.warn{background:rgba(227,165,60,.08);border-color:rgba(227,165,60,.25)}
+.ch-blk .n{grid-row:span 2;width:22px;height:22px;border-radius:50%;background:var(--bad);color:#1b0a06;font:700 12px/22px var(--m-font);text-align:center}
+.ch-blk.warn .n{background:var(--warn)}
+.ch-blk b{font-weight:600;color:var(--text);font-size:14px}
+.ch-blk span{font-size:13px;color:var(--muted)}
+.ch-blk .path{font-size:12px;color:var(--faint)}
+.ch-tree{display:grid}
+.ch-grp{font:600 11px var(--m-font);letter-spacing:.06em;text-transform:uppercase;color:var(--faint);padding:12px 0 4px calc(var(--d)*22px)}
+.ch-row{position:relative;display:grid;grid-template-columns:20px 28px minmax(0,1fr) auto;gap:4px 8px;align-items:center;padding:7px 0 7px calc(var(--d)*22px);border-bottom:1px solid var(--m-edge)}
+.ch-row::before{content:"";position:absolute;left:0;top:0;bottom:0;width:calc(var(--d)*22px);background:repeating-linear-gradient(90deg,transparent 0 9px,var(--m-edge2) 9px 10px,transparent 10px 22px)}
+.ch-tog{width:20px;height:20px;border:0;border-radius:6px;background:transparent;color:var(--faint);font-size:11px;padding:0}
+.ch-tog:hover{background:rgba(255,255,255,.08);color:var(--text)}
+.ch-ic{width:28px;height:28px;border-radius:8px;background:var(--m-card2);display:grid;place-items:center}
+.ch-ic img{width:22px;height:22px}
+.ch-ic i{width:10px;height:10px;border-radius:50%;display:block}
+.ch-ic.t{font:700 13px var(--m-font);color:var(--muted)}
+.ch-main{min-width:0}
+.ch-name{border:0;background:none;padding:0;font:600 14px var(--m-font);color:var(--text);text-align:left;cursor:pointer}
+.ch-name:hover{text-decoration:underline;text-decoration-color:var(--faint)}
+.ch-name.plain{cursor:default;text-decoration:none}
+.ch-det{display:block;font-size:12.5px;color:var(--muted);margin-top:1px}
+.ch-det .chip{font:500 11.5px var(--m-font);border:0;border-radius:6px;background:rgba(255,255,255,.06);padding:2px 6px;margin:2px 2px 0 0;display:inline-block}
+.ch-det .chip.lack{background:rgba(229,110,87,.14);color:var(--bad)}
+.ch-pill{font:600 11.5px var(--m-font);padding:3px 9px;border-radius:99px;white-space:nowrap;justify-self:end}
+.st-ok .ch-pill{background:rgba(140,199,132,.14);color:var(--good)}
+.st-warn .ch-pill{background:rgba(227,165,60,.14);color:var(--warn)}
+.st-bad .ch-pill{background:rgba(229,110,87,.14);color:var(--bad)}
+.st-info .ch-pill{background:rgba(255,255,255,.06);color:var(--muted)}
+.ch-row.rep{opacity:.65}
+.ch-legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted)}
+.ch-legend span{display:flex;align-items:center;gap:6px}
+.ch-legend i{width:9px;height:9px;border-radius:50%}
+@media (max-width:640px){
+  .ch-row{grid-template-columns:18px 26px minmax(0,1fr);padding-left:calc(var(--d)*14px)}
+  .ch-row::before{width:calc(var(--d)*14px);background:repeating-linear-gradient(90deg,transparent 0 6px,var(--m-edge2) 6px 7px,transparent 7px 14px)}
+  .ch-grp{padding-left:calc(var(--d)*14px)}
+  .ch-pill{grid-column:3;justify-self:start;margin-top:2px}
+}
 </style>
 
 <header id="banner" class="banner"></header>
@@ -598,6 +665,7 @@ button.rc{font:inherit;font:12px var(--mono);color:inherit;cursor:pointer}
     </div>
   </div></div>
 </div>
+<div id="scr-chain" class="screen page" hidden><div id="chainbody" class="pagebody"></div></div>
 <div id="scr-launch" class="screen page" hidden><div id="launchbody" class="pagebody"></div></div>
 <section id="schedpop" class="panel queue schedpop" hidden></section>
 <div id="modal" hidden></div>
@@ -1651,6 +1719,10 @@ const actions = {
   tapmode:d=>{ ui.tapMode=d.id; if(d.id==='drive'){ ui.card=false; ui.tip=null; } },
   key:()=>showModal(`<h3>Map key</h3>${mapKey()}<div class="acts"><button class="btn" data-act="close">Close</button></div>`,'wide'),
   tech:d=>{ ui.tech=d.id; },
+  chain:d=>{ const t={t:d.t,id:d.id}; if(ui.chain&&(ui.chain.t!==t.t||ui.chain.id!==t.id)){ ui.chainBack=(ui.chainBack||[]).concat([ui.chain]).slice(-12); } ui.chain=t; ui.chainPick=false; ui.chainCol={}; ui.screen='chain'; hideModal&&!modal.hidden&&hideModal(); },
+  chainback:()=>{ const b=ui.chainBack||[]; if(b.length){ ui.chain=b.pop(); ui.chainCol={}; } },
+  chainpick:()=>{ ui.chainPick=!ui.chainPick; },
+  chaintog:d=>{ ui.chainCol=ui.chainCol||{}; ui.chainCol[d.k]=d.shut!=='1'; },
   rview:d=>{ ui.rview=d.v; },
   region:d=>{
     if(d.id==='earth'){ ui.view='earth'; return; }
@@ -1741,13 +1813,14 @@ function render(){
   F=flows(); computeObjects();
   document.body.dataset.era=S.era;
   renderBanner();
-  for(const s of ['map','research','colony','launch']){ const el=document.getElementById('scr-'+s); const h=ui.screen!==s; if(el.hidden!==h) el.hidden=h; }
+  for(const s of ['map','research','colony','chain','launch']){ const el=document.getElementById('scr-'+s); const h=ui.screen!==s; if(el.hidden!==h) el.hidden=h; }
   if(ui.screen==='map') renderMapScreen();
   else if(ui.screen==='research'){ const ids=Object.keys(TECHS), rr=(F.st.rp||0)-(S.res.rp||0), pv=ui.rview==='plan';
     const hdr=`<div class="colhead"><h1 class="h1">Research</h1></div><div class="rhead"><span><b>${ids.filter(T).length}</b> of ${ids.length} discoveries · <b>${fmt(S.res.rp)}</b> research points${rr>0?` · +${fmt(rr)}/mo`:''}</span>
       <div class="rtabs" role="group" aria-label="Research view"><button data-act="rview" data-v="tree" aria-pressed="${!pv}">Tree</button><button data-act="rview" data-v="plan" aria-pressed="${pv}">Schedule</button></div></div>`;
     put('research',hdr+(pv?tabPlan():tabResearch())); if(pv) drawPlanLines(); else drawTreeLines(); }
   else if(ui.screen==='colony'){ renderRibbon(); renderLedger(); renderColony(); renderQueue('queue'); renderLog(); }
+  else if(ui.screen==='chain') put('chainbody',tabChain());
   else if(ui.screen==='launch') put('launchbody',`<div class="colhead"><h1 class="h1">Launch</h1></div>`+tabLaunch());
   const sp=document.getElementById('schedpop'); if(sp.hidden!==!ui.sched) sp.hidden=!ui.sched; if(ui.sched) renderQueue('schedpop',true);
   document.body.style.setProperty('--bh',(document.getElementById('banner').offsetHeight+6)+'px');
@@ -1795,7 +1868,7 @@ function renderBanner(){
   const chips=keys.map(k=>{ const d=delta(k), v=S.res[k]||0;
     return `<button class="rc ${d<-0.05&&v+d*3<0?'alert':''}" data-act="resinfo" data-k="${k}" title="${RES[k]}: ${fmt(v)}, ${fmtRate(d)} per month"><span class="n">${SHORT[k]||RES[k]}</span>${fmt(v)}<span class="d ${d>0.05?'pos':d<-0.05?'neg':''}">${fmtRate(d)}</span></button>`; }).join('');
   const avail=Object.keys(TECHS).filter(id=>techState(id)==='ready').length;
-  const nav=[['colony','Colony'],['map','Map'],['research','Research',avail],['launch','Launch']];
+  const nav=[['colony','Colony'],['map','Map'],['research','Research',avail],['chain','Supply'],['launch','Launch']];
   put('banner',`<div class="bn-row top">
     <div class="bn-brand">${icon('logo')}<b>Steam <span>to</span> Stars</b></div>
     <div class="bn-date" title="${ERAS[S.era]}"><span class="mon">${MONTHS[S.month%12].toUpperCase()} ${(S.day||0)+1}</span><span class="yr">${yearOf(S.month)}</span><span class="era">${ERAS[S.era]}</span></div>
@@ -2420,6 +2493,121 @@ function tabLaunch(){
   ${voys?`<div class="section"><div class="cat"><h3>In flight</h3></div>${voys}</div>`:''}`;
 }
 
+
+/* ============ SUPPLY CHAINS ============ */
+const CHAIN_QUICK=[['b','apartment'],['res','steel'],['res','concrete'],['res','glass'],['res','electronics'],['res','stainless'],['res','fuel'],['res','carbon'],['res','alloy'],['b','launchpad']];
+const RES_COLOR={wood:'#8cc873',coal:'#b3aea4',ore:'#e0906f',iron:'#c98b6b',steel:'#9fb3c8',oil:'#e8bf55',fuel:'#f0a64a',copper:'#5fd0b2',concrete:'#c8c2b4',aluminum:'#dfe6ee',electronics:'#8fe39a',uranium:'#bfe860',titanium:'#c9d3e2',he3:'#9fd6ff',alloy:'#b9a2ff',stainless:'#d6e2ec',batteries:'#f6c945',glass:'#9fe0ff',advglass:'#7fd6ff',resin:'#e8a86a',fiberglass:'#f0e0a8',carbon:'#6c6c78',rp:'#93cdf0',money:'#f6c945'};
+const resCol=k=>RES_COLOR[k]||DEPCOL[k]||DEPCOL[Object.keys(DEPOSITS).find(x=>ORDER.some(id=>B[id].deposit===x&&B[id].out&&B[id].out[k]))]||'#a99f90';
+const producersOf=k=>ORDER.filter(id=>B[id].out&&B[id].out[k]);
+function chainRate(k){ return (F.st[k]||0)-(S.res[k]||0); }
+function bldRun(id){ // how the built copies of a building are doing
+  let n=0,on=0,e=0,why=null,whyW=0;
+  for(const rid in S.bld){ const b=S.bld[rid][id]; if(!b||!b.n) continue; n+=b.n; on+=b.on; const f=F.eff[rid+':'+id];
+    if(f&&b.on){ e+=f.e*b.on; if(f.why&&f.e<.999&&b.on>whyW){ why=f.why; whyW=b.on; } } }
+  return {n,on,e:on?e/on:0,why,q:queuedCount(id)};
+}
+function totalSites(k){ let found=0,used=0,cap=0; for(const rid of Object.keys(REG)){ const c=depCap(rid,k); found+=c; used+=Math.min(c,sitesUsed(rid,k)); } return {found,used}; }
+function chainTree(target){
+  const rows=[], seen=new Set(), blockers=[];
+  const col=ui.chainCol||{};
+  const push=r=>{ rows.push(r); if(r.st==='bad'||r.st==='warn') blockers.push(r); return r; };
+  const resNode=(k,d,path,need)=>{
+    const v=S.res[k]||0, r=chainRate(k), key=path+'>r:'+k, prods=producersOf(k);
+    let st, pill, det;
+    const enough=need&&v>=need;
+    if(enough){ st='ok'; pill='have enough'; det=`${fmt(v)} in stock`; }
+    else if(r>0.05){ st='ok'; pill=`+${fmtRate(r).replace('+','')}/mo`; det=`${fmt(v)} in stock`; }
+    else if(r<-0.05){ st=v+r*3>0?'warn':'bad'; pill=`${fmtRate(r)}/mo`; det=`${fmt(v)} in stock · being used faster than it's made`; }
+    else if(v>0.5){ st=need&&v<need?'warn':'info'; pill=`${fmt(v)} in stock`; det='Not being made right now'+(need&&v<need?`, and you need ${fmt(need)}`:''); }
+    else { st='bad'; pill='none'; det='None in stock and none being made'; }
+    if(need) det+=(det?' · ':'')+`needs ${fmt(need)}`;
+    const rep=seen.has('r:'+k), shut=key in col?col[key]:!!enough;
+    const row=push({kind:'res',id:k,d,st,pill,det,key,rep,name:RES[k],path,kids:!rep&&prods.length>0,shut});
+    if(rep||shut) return; seen.add('r:'+k);
+    if(st==='ok'&&d>0&&!need){ row.kids=prods.length>0; } // keep expandable
+    for(const id of prods) bldNode(id,d+1,path?path+' › '+RES[k]:RES[k],false,k);
+  };
+  const bldNode=(id,d,path,isRoot,forRes)=>{
+    const b=B[id], key=path+'>b:'+id, run=bldRun(id);
+    let st, pill, det='';
+    const locked=b.tech&&!T(b.tech);
+    if(locked){ st='bad'; pill='locked'; det=`Research ${TECHS[b.tech].name} to unlock it`; }
+    else if(!run.n){ st=run.q?'warn':(isRoot?'info':'bad'); pill=run.q?'scheduled':'not built'; det=run.q?'In the work schedule':'You have none yet'; }
+    else if(!run.on){ st='bad'; pill='switched off'; det=`${run.n} built, all switched off`; }
+    else if(run.e<.999){ const pct=Math.round(run.e*100); st=pct<1?'bad':'warn'; pill=pct<1?'idle':`${pct}% speed`;
+      det=run.why?`Short on ${run.why}`:'Running slow'; }
+    else { st='ok'; pill=`${run.on} running`; det=run.on<run.n?`${run.n-run.on} switched off`:''; }
+    if(!b.out&&!b.housing&&!b.crews&&!b.power) {}
+    const io=ioText(b).replace(/<[^>]+>/g,'');
+    if(!(isRoot&&!run.n)) det=det?det+' · '+io:io;
+    if(!run.n&&!locked) det+=(det?'<br>':'')+'Build cost: '+costChips(costAt?costAt(id,'home'):b.cost);
+    const rep=seen.has('b:'+id);
+    const shut=!!col[key];
+    const row=push({kind:'b',id,d,st,pill,det,key,rep,name:b.name,path,kids:!rep,shut});
+    if(rep||shut) return; seen.add('b:'+id);
+    const np=path?path+' › '+b.name:b.name;
+    if(locked) push({kind:'tech',id:b.tech,d:d+1,st:'bad',pill:TECHS[b.tech].cost.toLocaleString()+' RP',det:'Research needed first',name:TECHS[b.tech].name,path:np,key:key+'>t'});
+    if(isRoot&&!locked){ const cost=costAt?costAt(id,'home'):b.cost; const ks=Object.keys(cost).filter(k=>k!=='money'&&k!=='rocket');
+      if(ks.length){ rows.push({grp:'To build it',d:d+1}); for(const k of ks) resNode(k,d+1,np,cost[k]); } }
+    if(b.deposit){ const t=totalSites(b.deposit), nm=DEPOSITS[b.deposit];
+      let st2,pill2,det2; if(!t.found){ st2='bad'; pill2='none found'; det2=b.where==='space'||['he3','titanium'].includes(b.deposit)?'Survey worlds in space to find these':'Drive your vehicle around to find these sites'; }
+      else if(t.used>=t.found){ st2=run.n?'info':'warn'; pill2=`${t.used}/${t.found} used`; det2='Every known site is in use. Find more to build more.'; }
+      else { st2='ok'; pill2=`${t.found-t.used} free`; det2=`${t.found} found, ${t.used} in use`; }
+      if(isRoot||!run.n||st2==='bad') { if(!isRoot&&!b.in&&!b.power) rows.push({grp:'Needs',d:d+1}); push({kind:'dep',id:b.deposit,d:d+1,st:st2,pill:pill2,det:det2,name:nm,path:np,key:key+'>d'}); } }
+    const ins=b.in?Object.keys(b.in):[];
+    if(ins.length||(b.power<0)||b.workers){ if(isRoot) rows.push({grp:'To run it',d:d+1});
+      for(const k of ins) resNode(k,d+1,np,0);
+      if(b.power<0){ const pr=F.demand?F.supply/F.demand:1; push({kind:'power',d:d+1,st:pr>=1?'ok':'bad',pill:pr>=1?`${fmt(F.supply)} MW`:`${Math.round(pr*100)}% power`,det:pr>=1?`Needs ${-b.power} MW. Supply ${fmt(F.supply)} / demand ${fmt(F.demand)} MW`:`Needs ${-b.power} MW, but demand (${fmt(F.demand)} MW) is more than supply (${fmt(F.supply)} MW). Build power plants.`,name:'Power',path:np,key:key+'>p'}); }
+      if(b.workers&&(isRoot||F.staff<1)){ push({kind:'work',d:d+1,st:F.staff>=1?'ok':'bad',pill:F.staff>=1?'staffed':`${Math.round(F.staff*100)}% staffed`,det:F.staff>=1?`Needs ${b.workers} workers`:`Needs ${b.workers} workers. Only ${F.employed} of ${fmt(F.jobs)} jobs are filled. Build more housing.`,name:'Workers',path:np,key:key+'>w'}); } }
+  };
+  if(target.t==='res') resNode(target.id,0,'',0); else bldNode(target.id,0,'',true);
+  return {rows,blockers};
+}
+function chainBlockers(bl){
+  // list root causes in chain order; skip symptoms (an idle plant or an empty resource) that a deeper row explains
+  const root=r=>!r.rep&&(r.kind==='dep'||r.kind==='tech'||r.kind==='power'||r.kind==='work'||(r.kind==='b'&&['locked','not built','switched off'].includes(r.pill)));
+  const rows=bl.filter(root), out=[], seenK=new Set();
+  for(const st of ['bad','warn']) for(const r of rows){ if(r.st!==st) continue; const k=r.kind+':'+(r.id||r.name); if(seenK.has(k)) continue; seenK.add(k);
+    let msg, det=r.det.replace(/<br>.*$/,'').replace(/<[^>]+>/g,'');
+    if(r.kind==='dep'){ msg=r.pill==='none found'?`No ${r.name.toLowerCase()} found yet`:`All ${r.name.toLowerCase()} sites are in use`; }
+    else if(r.kind==='tech'){ msg=`${r.name} isn't researched yet`; det=`Costs ${r.pill}. See the Research screen.`; }
+    else if(r.kind==='power'){ msg='Not enough power'; det=`Demand is ${fmt(F.demand)} MW but supply is only ${fmt(F.supply)} MW, so every powered building slows down. Build more power plants.`; }
+    else if(r.kind==='work'){ msg='Not enough workers'; det=`Only ${F.employed} of ${fmt(F.jobs)} jobs are filled. Build more housing.`; }
+    else { msg=r.pill==='locked'?`${r.name} is locked`:r.pill==='not built'?`No ${r.name} built yet`:`${r.name} is switched off`; det=det.split(' · ')[0]; }
+    out.push({msg,det,path:r.path,st:r.st}); if(out.length>=6) break; }
+  return out;
+}
+function tabChain(){
+  if(!ui.chain) ui.chain={t:'b',id:'apartment'};
+  const tg=ui.chain, isRes=tg.t==='res', name=isRes?RES[tg.id]:B[tg.id].name;
+  const {rows,blockers}=chainTree(tg);
+  const ico=isRes?`<div class="ico"><i style="width:14px;height:14px;border-radius:50%;background:${resCol(tg.id)};display:block"></i></div>`:`<div class="ico">${icon(tg.id)}</div>`;
+  const back=(ui.chainBack||[]).length?`<button class="ch-btn" data-act="chainback">← Back</button>`:'';
+  const head=`<div class="ch-card ch-target">${ico}<div><div class="kind">${isRes?'Resource':'Building'}</div><h2>${name}</h2></div><span class="grow"></span>${back}<button class="ch-btn" data-act="chainpick" aria-pressed="${!!ui.chainPick}">Choose something else</button></div>`;
+  const quick=`<div class="ch-quick"><span class="lbl">Quick picks</span>${CHAIN_QUICK.map(([t,id])=>`<button data-act="chain" data-t="${t}" data-id="${id}" aria-pressed="${tg.t===t&&tg.id===id}">${t==='res'?RES[id]:B[id].name}</button>`).join('')}</div>`;
+  let pick='';
+  if(ui.chainPick){
+    const resKeys=Object.keys(RES).filter(k=>k!=='rocket'&&k!=='money');
+    const seenOrMade=k=>S.seen[k]||(S.res[k]||0)>0||producersOf(k).some(id=>!B[id].tech||T(B[id].tech));
+    const resBtns=resKeys.map(k=>`<button class="${seenOrMade(k)?'':'dim'}" data-act="chain" data-t="res" data-id="${k}" aria-pressed="${isRes&&tg.id===k}">${RES[k]}</button>`).join('');
+    const cats=CATS.map(([c,label])=>{ const ids=ORDER.filter(id=>B[id].cat===c); return `<div><h4>${label}</h4><div class="set">${ids.map(id=>`<button class="${!B[id].tech||T(B[id].tech)?'':'dim'}" data-act="chain" data-t="b" data-id="${id}" aria-pressed="${!isRes&&tg.id===id}">${B[id].name}</button>`).join('')}</div></div>`; }).join('');
+    pick=`<div class="ch-card ch-pick"><div><h4>Resources</h4><div class="set">${resBtns}</div></div>${cats}</div>`;
+  }
+  const bl=chainBlockers(blockers);
+  const rootRow=rows[0]; const working=rootRow&&rootRow.st==='ok';
+  const sum=`<div class="ch-card ch-sum"><h3>${working?`${name} is being ${isRes?'made':'used'}`:`Why ${isRes?name.toLowerCase()+" isn't being made":name+" can't be built or run"}`}</h3>
+    ${bl.length?bl.map((b,i)=>`<div class="ch-blk ${b.st==='warn'?'warn':''}"><span class="n">${i+1}</span><b>${b.msg}</b><span>${b.det}${b.path?`<span class="path"> · in ${b.path}</span>`:''}</span></div>`).join(''):`<div class="ch-ok">✓ Everything in this chain is working.</div>`}</div>`;
+  const tree=rows.map(r=>{
+    if(r.grp) return `<div class="ch-grp" style="--d:${r.d}">${r.grp}</div>`;
+    const ic=r.kind==='b'?`<span class="ch-ic">${icon(r.id)}</span>`:r.kind==='res'?`<span class="ch-ic"><i style="background:${resCol(r.id)}"></i></span>`:r.kind==='dep'?`<span class="ch-ic"><i style="background:${DEPCOL[r.id]||'#aaa'};border-radius:2px;transform:rotate(45deg)"></i></span>`:r.kind==='power'?'<span class="ch-ic t">⚡</span>':r.kind==='work'?'<span class="ch-ic t">👷</span>':'<span class="ch-ic t">🔬</span>';
+    const tog=r.kids?`<button class="ch-tog" data-act="chaintog" data-k="${r.key}" data-shut="${r.shut?1:0}" aria-label="${r.shut?'Expand':'Collapse'}">${r.shut?'▶':'▼'}</button>`:'<span></span>';
+    const nm=r.kind==='res'?`<button class="ch-name" data-act="chain" data-t="res" data-id="${r.id}">${r.name}</button>`:r.kind==='b'?`<button class="ch-name" data-act="chain" data-t="b" data-id="${r.id}">${r.name}</button>`:r.kind==='tech'?`<button class="ch-name" data-act="screen" data-id="research">${r.name}</button>`:`<span class="ch-name plain">${r.name}</span>`;
+    return `<div class="ch-row st-${r.st} ${r.rep?'rep':''}" style="--d:${r.d}">${tog}${ic}<div class="ch-main">${nm}${r.rep?' <span class="ch-det" style="display:inline">· shown above</span>':''}<span class="ch-det">${r.rep?'':r.det}</span></div><span class="ch-pill">${r.pill}</span></div>`; }).join('');
+  const legend=`<div class="ch-legend"><span><i style="background:var(--good)"></i>Working</span><span><i style="background:var(--warn)"></i>Slow or running low</span><span><i style="background:var(--bad)"></i>Blocked</span><span>Tap any name to follow its chain</span></div>`;
+  return `<div class="colhead"><h1 class="h1">Supply chains</h1></div>
+    <p class="lead">Pick a resource or building to see everything it depends on, and what's holding it up.</p>
+    ${head}${quick}${pick}${sum}<div class="ch-card"><div class="ch-tree">${tree}</div></div>${legend}`;
+}
 /* ---------- Queue & log ---------- */
 function renderQueue(id,pop){
   const c=crews();
