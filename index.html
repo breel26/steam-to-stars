@@ -316,6 +316,8 @@ h2{font:700 12px/1 var(--pixel);letter-spacing:.04em;text-transform:uppercase;co
   .g-track{grid-column:1}
   .g-ticks span:not(:first-child):not(:last-child){display:none}
 }
+#scr-colony .card.proj{border-color:color-mix(in srgb,var(--acc) 45%,transparent);background:linear-gradient(180deg,var(--acc-soft),var(--m-card2))}
+#scr-colony .card.proj h4{font-weight:700}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
 /* ===== screen layout ===== */
@@ -852,6 +854,34 @@ const TECHS = {
   starship:{name:'Starship Design',f:'space',era:5,cost:10000,req:['fusion','orbital','exoplanets'],hist:'not yet',fx:{},desc:'Everything comes together. Starship modules can be built at the Orbital Shipyard.'}
 };
 
+/* Hidden breakthroughs: not on the research tree. When the trigger is met, a national project unlocks. */
+const BREAKS = {
+  radionet:{name:'National Radio Network',hint:'Radio Broadcasting + 3 regions charted',time:4,cost:{steel:80,copper:40,electronics:20,money:2000},fx:{rp:.15,money:.1},
+    desc:'Broadcast towers in every charted region carry lectures, market prices and orders to the whole country at once.',test:()=>T('radio')&&chartedCount()>=3},
+  railroad:{name:'Transcontinental Railroad',hint:'Steel Railways + 4 regions charted',time:6,cost:{steel:300,wood:200,money:3000},fx:{build:.2},remote:true,
+    desc:'A trunk line ties every region to Mill Valley. Materials arrive faster and remote sites lose their building surcharge.',test:()=>T('railways')&&chartedCount()>=4},
+  grid:{name:'National Power Grid',hint:'Electrification + 100 MW generated',time:5,cost:{steel:150,copper:120,concrete:100,money:4000},fx:{power:.2},
+    desc:'High-voltage lines link every plant into one grid, so no generator sits idle while another region goes dark.',test:()=>T('elec')&&F&&F.supply>=100},
+  massprod:{name:'Mass Production',hint:'Assembly Line + 10 industry buildings',time:4,cost:{steel:200,electronics:40,money:5000},fx:{industry:.2},
+    desc:'Standard parts and moving lines in every works. Each factory turns out far more for the same crew.',test:()=>T('assembly')&&ORDER.filter(id=>B[id].cat==='industry').reduce((a,id)=>a+nOf(id),0)>=10},
+  natlabs:{name:'National Laboratories',hint:'Transistor Computing + a Research Institute',time:6,cost:{concrete:200,electronics:100,advglass:30,money:10000},fx:{rp:.25},
+    desc:'A network of government labs shares equipment, data and the best minds across every research building.',test:()=>T('computing')&&nOf('institute')>0},
+  spacerace:{name:'Space Race',hint:'Rocketry + first orbit survey',time:6,cost:{aluminum:100,electronics:80,money:15000},fx:{rocket:.25},
+    desc:'Reaching orbit fires up the whole nation. Suppliers compete to build rockets faster and cheaper.',test:()=>T('rocketry')&&!!S.explored.leo},
+  gps:{name:'Global Positioning',hint:'Communication Satellites + The Internet',time:6,cost:{electronics:200,aluminum:80,money:20000},fx:{extract:.15,sight:1},
+    desc:'A satellite constellation pinpoints every truck, drill and survey team. Mines dig exactly where the ore is.',test:()=>T('satellites')&&T('internet')},
+  lightsout:{name:'Lights-Out Factories',hint:'Machine Learning + Autonomous Robotics',time:8,cost:{electronics:400,alloy:50,money:40000},fx:{all:.2},
+    desc:'Robots run the night shift, and then every shift. Output climbs everywhere.',test:()=>T('ai')&&T('robotics')},
+  fusionecon:{name:'Fusion Economy',hint:'Fusion Power + helium-3 flowing',time:8,cost:{stainless:200,electronics:300,money:60000},fx:{mods:.15},
+    desc:'Nearly free energy makes exotic materials cheap. Every starship module costs less to build.',test:()=>T('fusion')&&F&&(F.st.he3||0)>(S.res.he3||0)}
+};
+const chartedCount=()=>EARTH.filter(isExplored).length;
+function checkBreaks(){ if(!S.breaks) S.breaks={}; for(const [id,b] of Object.entries(BREAKS)){ if(S.breaks[id]) continue; let ok=false; try{ ok=b.test(); }catch(e){} if(!ok) continue;
+    S.breaks[id]='found'; log(`Breakthrough! ${b.name} is now possible.`,true);
+    showModal(`<div class="eyebrow">Breakthrough</div><h3>${b.name}</h3><p>${b.desc}</p><p><b style="color:var(--good)">${breakFx(b)}</b></p><div class="costs">${costChips(b.cost)}</div><p class="time">${b.time} months to complete · one time only</p>
+      <div class="acts"><button class="ghost" data-act="close">Later</button><button class="btn" data-act="project" data-id="${id}" ${afford(b.cost)?'':'disabled'}>${afford(b.cost)?'Schedule it':'Not enough resources yet'}</button></div>`);
+    return; } }
+function breakFx(b){ const l=Object.entries(b.fx||{}).map(([k,v])=>fxText(k,v)); if(b.remote) l.push('No surcharge for building in remote regions'); return l.join(' · '); }
 /* Regions: every place on the map. dep = deposit sites, plots = room for non-mining buildings. */
 const REG = {
   leo:{name:'Low Earth Orbit',biome:'Orbit, 400 km',where:'space',tech:'rocketry',cost:{rocket:1},time:3,dep:{},plots:1,reward:{rp:400},
@@ -1347,7 +1377,8 @@ const nOf = id => Object.keys(S.bld).reduce((a,rid)=>a+nAt(rid,id),0);
 const qAt = (rid,id) => S.queue.filter(q=>q.kind==='build'&&q.id===id&&q.rid===rid).length;
 const queuedCount = id => S.queue.filter(q=>q.kind==='build'&&q.id===id).length;
 const isExplored = rid => !!(REG[rid].start||S.explored[rid]);
-function allFx(){ const o={}; if(!S) return o; for(const id in S.techs){ const t=TECHS[id]; if(!t||!t.fx) continue; for(const k in t.fx) o[k]=(o[k]||0)+t.fx[k]; } return o; }
+function allFx(){ const o={}; if(!S) return o; for(const id in S.techs){ const t=TECHS[id]; if(!t||!t.fx) continue; for(const k in t.fx) o[k]=(o[k]||0)+t.fx[k]; }
+  for(const id in (S.breaks||{})){ if(S.breaks[id]!=='built'||!BREAKS[id]) continue; const f=BREAKS[id].fx||{}; for(const k in f) o[k]=(o[k]||0)+f[k]; } return o; }
 const FXTXT={rp:'Research output',power:'Power plant output',industry:'Industry output',extract:'Extractor output',all:'All building output',money:'Funds from wages',housing:'Residents per home',build:'Construction speed',cost:'Building costs',fuel:'Vehicle fuel use',sight:'Vehicle sight',speed:'Vehicle speed',rocket:'Rocket costs',mods:'Starship module costs'};
 function fxText(k,v){ if(k==='sight') return `${FXTXT[k]} +${v} tile`; const neg=['cost','fuel','rocket','mods'].includes(k); return `${FXTXT[k]} ${neg?'−':'+'}${Math.round(v*100)}%`; }
 const housing = () => 10 + Math.floor(ORDER.reduce((a,id)=>a+(B[id].housing||0)*nOf(id),0)*(1+(allFx().housing||0)));
@@ -1360,7 +1391,7 @@ const have = k => k==='rocket' ? S.items.rocket : (S.res[k]||0);
 const afford = c => Object.entries(c).every(([k,v])=>have(k)>=v-1e-9);
 function pay(c){ for(const [k,v] of Object.entries(c)){ if(k==='rocket') S.items.rocket-=v; else S.res[k]-=v; } }
 function refund(c,f){ for(const [k,v] of Object.entries(c)){ if(k==='rocket') S.items.rocket+=Math.round(v*f); else S.res[k]+=v*f; } }
-function surcharge(rid,id){ if(rid==='home') return 1; if(REG[rid].where==='earth') return 1.25; return B[id].cat==='space'?1:2; }
+function surcharge(rid,id){ if(rid==='home') return 1; if(REG[rid].where==='earth') return S&&S.breaks&&S.breaks.railroad==='built'?1:1.25; return B[id].cat==='space'?1:2; }
 function baseCost(id){ const d=B[id], k=nOf(id)+queuedCount(id), s=d.scale||1.1, f=1-Math.min(.5,allFx().cost||0), o={}; for(const [r,v] of Object.entries(d.cost)) o[r]=Math.ceil(v*Math.pow(s,k)*f); return o; }
 function costAt(id,rid){ const b=baseCost(id), f=surcharge(rid,id), o={}; for(const k in b) o[k]=Math.ceil(b[k]*f); return o; }
 function bonusX(rid,id){ const bo=REG[rid].bonus; if(!bo||!bo.x) return 1; if(bo.ids&&bo.ids.includes(id)) return bo.x; if(bo.cat&&B[id].cat===bo.cat) return bo.x; return 1; }
@@ -1438,7 +1469,7 @@ function tick(){ // one day
   for(const k in S.res) if(S.res[k]>0) S.seen[k]=true;
   S.day=(S.day||0)+1;
   if(S.day>=dim){ // end of month
-    S.day=0; S.month++;
+    S.day=0; S.month++; checkBreaks();
     const h=housing(); if(S.pop<h) S.pop=Math.min(h, S.pop+Math.max(1,Math.ceil((h-S.pop)*0.08)));
     save();
   }
@@ -1449,6 +1480,7 @@ function complete(q){
     const r=S.bld[q.rid]||(S.bld[q.rid]={}); const b=r[q.id]||(r[q.id]={n:0,on:0}); b.n++; b.on++; if(q.tile!=null){ if(!S.at) S.at={}; S.at[q.tile]={id:q.id,rid:q.rid}; }
     log(`${B[q.id].name} completed in ${REG[q.rid].name}.`);
   } else if(q.kind==='rocket'){ S.items.rocket++; log('A rocket rolls out to the pad.'); }
+  else if(q.kind==='project'){ S.breaks[q.id]='built'; log(`National project complete: ${BREAKS[q.id].name}. ${breakFx(BREAKS[q.id])}.`,true); }
   else if(q.kind==='module'){ S.modules[q.id]=true; log(`Starship module finished: ${MODS[q.id].name}.`,true); }
   else if(q.kind==='exp'){
     const e=REG[q.id]; S.explored[q.id]=true;
@@ -1724,6 +1756,7 @@ const actions = {
   chainpick:()=>{ ui.chainPick=!ui.chainPick; },
   chaintog:d=>{ ui.chainCol=ui.chainCol||{}; ui.chainCol[d.k]=d.shut!=='1'; },
   rview:d=>{ ui.rview=d.v; },
+  project:d=>{ const b=BREAKS[d.id]; if(!b||!S.breaks||S.breaks[d.id]!=='found'||S.queue.some(q=>q.kind==='project'&&q.id===d.id)||!afford(b.cost)) return; enqueue({kind:'project',id:d.id,left:b.time},b.cost); if(!modal.hidden) hideModal(); },
   region:d=>{
     if(d.id==='earth'){ ui.view='earth'; return; }
     ui.sel=d.id;
@@ -1980,9 +2013,18 @@ function renderMapScreen(){
     put('hud',`${icon('car_'+S.car.kind)}<div><b>${C.name}</b><div class="${f<u*4?'neg':''}">${RES[C.fuel]} ${fmt(f)} · ${u}/tile</div></div><span class="hint2">${ui.placing?'Click where it should go':ui.tapMode==='drive'?'Tap to drive · hold to inspect':'Tap anything to see what it is'}</span>`); }
   const ic=document.getElementById('infocard'), html=ui.card&&!ui.placing&&!ui.fly?cardHTML():''; if(ic.hidden!==!html) ic.hidden=!html; if(html) put('infocard',html);
 }
+function projSection(){
+  const ids=Object.keys(BREAKS).filter(id=>S.breaks&&S.breaks[id]); if(!ids.length) return '';
+  const cards=ids.map(id=>{ const b=BREAKS[id], st=S.breaks[id], q=S.queue.find(x=>x.kind==='project'&&x.id===id);
+    const right=st==='built'?'<span class="tag on">Complete</span>':q?`<span class="tag">${fmtLeft(q.left)} left</span>`:`<button class="btn" data-act="project" data-id="${id}" ${afford(b.cost)?'':'disabled'}>Schedule</button>`;
+    return `<article class="card proj ${st==='built'?'done-p':''}"><div class="card-h"><h4>${b.name}</h4>${right}</div><p class="desc">${b.desc}</p><p class="io" style="color:var(--good)">${breakFx(b)}</p>
+      ${st==='built'||q?'':`<div class="costs">${costChips(b.cost)}</div><span class="time">${b.time} months</span>`}</article>`; }).join('');
+  return `<div class="sub">National projects · ${ids.length} breakthrough${ids.length>1?'s':''} found</div><div class="grid projgrid" style="margin:4px 0 8px">${cards}</div>`;
+}
 function renderColony(){
   const chips=list=>list.filter(rid=>REG[rid].where!=='earth'||SEEN.has(rid)).map(rid=>`<button class="${isExplored(rid)?'':'fog'}" data-act="region" data-id="${rid}" aria-pressed="${ui.sel===rid}">${REG[rid].name}</button>`).join('');
   put('colonybody',`<div class="colhead"><h1 class="h1">Colony</h1><span class="grow"></span>${REG[ui.sel]?`<button class="ghost" data-act="region" data-id="${ui.sel}" data-center="1">Show on map</button>`:''}<button class="ghost" data-act="newgame">New game</button></div>
+    ${projSection()}
     <div class="sub">Earth regions</div><div class="regions" style="margin-top:4px">${chips(EARTH)}</div>
     <div class="sub">Space</div><div class="regions" style="margin-top:4px">${chips(SPACE)}</div>${detail()}`);
 }
@@ -2611,9 +2653,9 @@ function tabChain(){
 /* ---------- Queue & log ---------- */
 function renderQueue(id,pop){
   const c=crews();
-  const lab={build:'BUILD',exp:'SURVEY',rocket:'ROCKET',module:'SHIPYARD'};
-  const name=q=>q.kind==='build'?`${B[q.id].name} <span style="color:var(--faint);font-weight:400">· ${REG[q.rid].name}</span>`:q.kind==='exp'?REG[q.id].name:q.kind==='rocket'?'Rocket':MODS[q.id].name;
-  const ico={build:q=>q.id,exp:()=>'logo',rocket:()=>'launchpad',module:()=>'shipyard'};
+  const lab={build:'BUILD',exp:'SURVEY',rocket:'ROCKET',module:'SHIPYARD',project:'PROJECT'};
+  const name=q=>q.kind==='build'?`${B[q.id].name} <span style="color:var(--faint);font-weight:400">· ${REG[q.rid].name}</span>`:q.kind==='exp'?REG[q.id].name:q.kind==='rocket'?'Rocket':q.kind==='project'?BREAKS[q.id].name:MODS[q.id].name;
+  const ico={build:q=>q.id,exp:()=>'logo',rocket:()=>'launchpad',module:()=>'shipyard',project:()=>'logo'};
   const items=S.queue.map((q,i)=>{ const on=i<c, p=(1-q.left/q.total)*100;
     return `<li class="q ${on?'':'wait'}"><div class="q-top">${icon(ico[q.kind](q))}<span class="kind">${lab[q.kind]}</span><span class="q-name">${name(q)}</span><span class="q-left">${on?fmtLeft(q.left):'waiting'}</span></div>
     <div class="q-bot"><div class="prog"><i style="width:${p.toFixed(1)}%"></i></div>
@@ -2656,7 +2698,7 @@ async function start(data){
   for(const k in RES) if(k!=='rocket'&&S.res[k]==null) S.res[k]=0;
   DEPT.forEach((d,j)=>{ if(d.rid==='home'&&!S.found.includes(j)) S.found.push(j); });
   syncTiles();
-  if(![0,1,10,100,1000].includes(S.speed)) S.speed=1; if(S.day==null) S.day=0;
+  if(![0,1,10,100,1000].includes(S.speed)) S.speed=1; if(S.day==null) S.day=0; if(!S.breaks) S.breaks={};
   if(!S.fastBuild){ for(const q of S.queue) if(q.kind==='build'){ q.left*=BUILD_SPEED; q.total*=BUILD_SPEED; } S.fastBuild=true; }
   resetCams();
   render();
