@@ -156,6 +156,42 @@ h2{font:700 12px/1 var(--pixel);letter-spacing:.04em;text-transform:uppercase;co
 .ct .kind{color:var(--good)} .ct.risk .kind{color:var(--bad)}
 .ct-note{margin:0;font-size:12px;color:var(--muted)}
 .btn.sm{padding:3px 10px;font-size:12px}
+.ghost.sm{padding:3px 9px;font-size:12px}
+.q-name.lnk,.lnk{background:none;border:0;padding:0;color:inherit;text-align:left;cursor:pointer;font:inherit}
+.q-name.lnk:hover,.lnk:hover{text-decoration:underline}
+.lnk{color:var(--acc)}
+.q-meta{font-size:11.5px;color:var(--muted);margin-top:-2px}
+.q.ship .kind{color:#9fd6ff}
+.bline{display:flex;align-items:center;gap:8px;margin:0 10px 8px;font-size:12.5px;color:var(--muted)}
+.bline b{color:var(--text)} .bline .grow{flex:1}
+.stepper.sm button{width:24px;height:22px}
+.dlg.pj{max-width:860px;width:min(860px,calc(100vw - 24px));max-height:calc(100vh - 40px);overflow-y:auto}
+.pj-top{display:flex;gap:10px;align-items:center;margin:6px 0 10px} .pj-top .prog{flex:1}
+.ph-tag{font-size:12.5px;padding:3px 10px;border-radius:99px;background:rgba(255,255,255,.06);white-space:nowrap}
+.ph-tag.ship{color:#9fd6ff} .ph-tag.on{color:var(--good)} .ph-tag.wait{color:var(--warn)}
+.mxs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.mx{font-size:12px;padding:3px 9px;border-radius:99px;border:1px solid var(--line);color:var(--muted)} .mx b{color:var(--text)}
+.mx.pos b{color:var(--good)} .mx.neg b{color:var(--bad)} .mx.tot{border-color:var(--acc);color:var(--text)}
+.pj-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:18px}
+@media (max-width:700px){.pj-grid{grid-template-columns:minmax(0,1fr)}}
+.pj-row{display:flex;align-items:center;gap:8px;font-size:13px;margin:4px 0} .pj-row>span:first-child{flex:1}
+.pj-row img{width:28px;height:28px}
+.note{font-size:12px;color:var(--muted);margin:4px 0 8px}
+.mats{display:flex;flex-wrap:wrap;gap:4px}
+.role{border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-bottom:8px}
+.role-h{display:flex;gap:8px;align-items:center;font-size:13px} .role-h .grow{flex:1}
+.tag.req{color:var(--warn);border-color:var(--warn)}
+.unit{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:12.5px} .unit img{width:32px;height:32px}
+.unit>span{flex:1;display:grid} .unit small{color:var(--muted)}
+.role-a{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.eqlist{display:grid;gap:6px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.eqt{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:8px;padding:8px} .eqt img{width:36px;height:36px;flex:none}
+.eqt-b{flex:1;display:grid;gap:2px;font-size:12.5px} .eqt-b small{color:var(--muted)} .eqt.lock{opacity:.55}
+.orders{list-style:none;margin:0;padding:0;display:grid;gap:4px} .orders li{display:flex;align-items:center;gap:8px;font-size:13px} .orders img{width:24px;height:24px} .orders .grow{flex:1}
+.specs{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px}
+.specs button{text-align:left;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--text);padding:8px;display:grid;gap:2px;cursor:pointer}
+.specs button small{color:var(--muted);font-size:11px} .specs button[aria-pressed=true]{border-color:var(--acc);background:rgba(232,176,48,.1)}
+.acts .grow{flex:1}
 #scr-colony .btn.sm{padding:4px 12px;font-size:12px}
 .btn:disabled{opacity:.45;cursor:default;box-shadow:none}
 .wx{margin-left:6px;font:600 11px var(--mono);padding:1px 6px;border-radius:99px;white-space:nowrap}
@@ -720,7 +756,7 @@ const B = {
   cottage:{name:'Cottages',cat:'housing',cost:{wood:20,money:20},time:2,housing:5,scale:1.08,desc:'Timber houses for five more residents.'},
   apartment:{name:'Apartment Block',cat:'housing',tech:'concrete',cost:{concrete:30,steel:10,zinc:5,glass:10,money:150},time:4,housing:25,scale:1.08,desc:'Concrete walk-ups for 25 residents.'},
   arcology:{name:'Arcology',cat:'housing',tech:'arcology',cost:{concrete:400,steel:200,electronics:50,aluminum:50,batteries:40,glass:200,fiberglass:50,money:8000},time:18,housing:150,power:-20,desc:'A self-contained city tower for 150 residents.'},
-  barracks:{name:'Crew Hall',cat:'housing',cost:{wood:40,iron:10,money:60},time:3,crews:1,scale:1.5,desc:'Trains one more work crew, so one more project runs at the same time.'},
+  barracks:{name:'Crew House',cat:'housing',cost:{wood:40,iron:10,money:60},time:3,crewhouse:1,scale:1.5,desc:'Bunkhouse and yard for a specialist building crew. Construction within 5 tiles goes up to 50% faster when its specialty matches. Big projects need more than one. Tap it in Look mode to set its specialty.'},
 
   lumber:{name:'Lumber Camp',cat:'extract',cost:{money:30},time:1,workers:2,deposit:'forest',out:{wood:4}},
   coalmine:{name:'Coal Mine',cat:'extract',cost:{wood:20,money:40},time:2,workers:3,deposit:'coal',out:{coal:3}},
@@ -757,6 +793,8 @@ const B = {
   solarfarm:{name:'Solar Farm',cat:'power',tech:'solar',cost:{aluminum:20,electronics:10,advglass:10,money:1000},time:3,workers:1,power:20,desc:'No fuel and no site needed. Any free plot.'},
   fusion:{name:'Fusion Reactor',cat:'power',tech:'fusion',cost:{alloy:60,electronics:150,concrete:400,stainless:100,tungsten:40,carbon:40,neodymium:30,yttrium:20,money:20000},time:18,workers:4,in:{he3:0.2},power:1000},
 
+  machineworks:{name:'Machine Works',cat:'industry',cost:{wood:40,iron:30,money:120},time:3,workers:3,factory:0,desc:'Builds steam-age construction equipment. Tap it in Look mode to order machines.'},
+  equipfactory:{name:'Equipment Factory',cat:'industry',tech:'assembly',cost:{steel:80,concrete:40,money:800},time:5,workers:6,power:-6,factory:1,desc:'Builds every kind of construction equipment, twice as fast as a Machine Works.'},
   furnace:{name:'Blast Furnace',cat:'industry',cost:{wood:30,money:50},time:2,workers:2,in:{ore:2,coal:1},out:{iron:2}},
   steelmill:{name:'Steel Mill',cat:'industry',tech:'bessemer',cost:{iron:30,wood:20,money:120},time:3,workers:3,power:-3,in:{iron:2,coal:1,manganese:0.2},out:{steel:1}},
   stainlessworks:{name:'Stainless Steel Works',cat:'industry',tech:'stainless',cost:{steel:30,money:300},time:4,workers:3,power:-4,in:{steel:2,chromium:0.5,nickel:0.5},out:{stainless:2}},
@@ -786,7 +824,7 @@ const ORDER = Object.keys(B);
 const CATS = [['housing','Housing & crews'],['extract','Extraction'],['power','Power'],['industry','Industry'],['science','Research'],['space','Space']];
 
 const FIELDS = {
-  phys:['Physics','#8fd0ff'], chem:['Chemistry & materials','#eaa56a'], energy:['Energy','#f6c945'], eng:['Engineering','#c9b28a'],
+  phys:['Physics','#8fd0ff'], chem:['Chemistry & materials','#eaa56a'], energy:['Energy','#f6c945'], eng:['Engineering','#c9b28a'], build:['Construction','#e8b030'],
   trans:['Transport & flight','#ea7560'], elec:['Electronics & computing','#8fe39a'], bio:['Life sciences','#d99ae8'], space:['Space','#b9a2ff']
 };
 /* f = field, era = game era, hist = when it really happened, fx = what it does for you */
@@ -799,6 +837,8 @@ const TECHS = {
   maxwell:{name:'Electromagnetism',f:'phys',era:0,cost:30,req:['thermo'],hist:'1865',fx:{rp:.1},desc:"Maxwell's equations unite electricity, magnetism and light."},
   periodic:{name:'Periodic Table',f:'chem',era:0,cost:20,req:[],hist:'1869',fx:{extract:.1},desc:'Mendeleev orders the elements and predicts ones nobody has found yet.'},
   dynamite:{name:'Dynamite',f:'chem',era:0,cost:25,req:['periodic'],hist:'1867',fx:{extract:.1},desc:"Nobel tames nitroglycerin. Mines and railway cuts go much faster."},
+  steamshovel:{name:'Steam Excavation',f:'build',era:0,cost:30,req:['thermo'],hist:'1839',fx:{},desc:"Otis's steam shovel digs in a day what a gang of navvies digs in a month. Unlocks the Steam Shovel and Steam Roller."},
+  derricks:{name:'Lifting Machinery',f:'build',era:0,cost:30,req:['bessemer'],hist:'1850s',fx:{},desc:'Steam winches and guyed derrick masts lift beams and stone into place. Unlocks the Derrick Crane.'},
   railways:{name:'Steel Railways',f:'trans',era:0,cost:30,req:['bessemer'],hist:'1860s',fx:{build:.1},desc:'Steel rails carry heavier trains farther, and materials arrive on time.'},
   // ---- Electric Age: ~1876–1925
   telephone:{name:'Telephone',f:'elec',era:1,cost:50,req:['maxwell'],hist:'1876',fx:{money:.1},desc:'Bell sends a voice down a wire. Business speeds up.'},
@@ -811,6 +851,9 @@ const TECHS = {
   plastics:{name:'Synthetic Plastics',f:'chem',era:1,cost:150,req:['petroleum','periodic'],hist:'1907',fx:{cost:.05},desc:'Baekeland makes Bakelite, the first fully synthetic plastic.'},
   quantum:{name:'Quantum Theory',f:'phys',era:1,cost:150,req:['electron','thermo'],hist:'1900',fx:{rp:.1},desc:'Planck finds energy comes in packets. Einstein explains the photoelectric effect.'},
   specrel:{name:'Special Relativity',f:'phys',era:1,cost:160,req:['maxwell','electron'],hist:'1905',fx:{rp:.05},desc:'Einstein links space and time. E = mc².'},
+  crawler:{name:'Crawler Tracks',f:'build',era:1,cost:150,req:['ice'],hist:'1904',fx:{},desc:"Holt's caterpillar tracks carry heavy machines over mud and soft ground. Unlocks the Bulldozer."},
+  mixers:{name:'Ready-Mix Concrete',f:'build',era:1,cost:160,req:['concrete','ice'],hist:'1916',fx:{},desc:'Concrete mixed in a drum on the way to the site. Unlocks the Concrete Mixer Truck.'},
+  forklifts:{name:'Industrial Trucks',f:'build',era:1,cost:140,req:['assembly'],hist:'1917',fx:{},desc:"Clark's Tructractor lifts and moves loads around the yard. Unlocks the Forklift."},
   aviation:{name:'Powered Flight',f:'trans',era:1,cost:180,req:['petroleum','elec'],hist:'1903',fx:{},desc:'The Wright brothers fly at Kitty Hawk. The Survey Plane can fly over sea and ice.'},
   hydropower:{name:'Hydroelectricity',f:'energy',era:1,cost:90,req:['elec'],hist:'1895',fx:{},desc:'Westinghouse generators at Niagara Falls send AC power to Buffalo.'},
   windpower:{name:'Wind Turbines',f:'energy',era:1,cost:120,req:['elec'],hist:'1888',fx:{},desc:"Charles Brush's wind dynamo charges a cellar full of batteries."},
@@ -838,6 +881,9 @@ const TECHS = {
   ceramics:{name:'Advanced Ceramics',f:'chem',era:2,cost:900,req:['polymers','concrete'],hist:'1950s',fx:{industry:.1},desc:'Alumina, silicon nitride and carbides survive heat that melts metal. Heat shields become possible.'},
   semicond:{name:'Integrated Circuit',f:'elec',era:2,cost:1100,req:['computing'],hist:'1958',fx:{rp:.1},desc:'Kilby and Noyce put a whole circuit on one chip.'},
   laser:{name:'Laser',f:'phys',era:2,cost:1000,req:['qm'],hist:'1960',fx:{rp:.1},desc:'Maiman fires the first ruby laser. Light becomes a precision tool.'},
+  hydraulics:{name:'Hydraulic Machinery',f:'build',era:2,cost:500,req:['stainless','crawler'],hist:'1940s–50s',fx:{},desc:'Chrome-plated rams and high-pressure oil give machines enormous, precise force. Unlocks the Hydraulic Excavator, Wheel Loader and Mobile Crane.'},
+  concpump:{name:'Concrete Pumping',f:'build',era:2,cost:450,req:['hydraulics','mixers'],hist:'1950s',fx:{},desc:'Hydraulic boom pumps place concrete anywhere on the site. Unlocks the Concrete Pump.'},
+  towercrane:{name:'Tower Cranes',f:'build',era:2,cost:600,req:['hydraulics'],hist:'1949',fx:{},desc:"Liebherr's self-erecting tower crane makes tall buildings practical. Unlocks the Tower Crane."},
   automation:{name:'Automation',f:'eng',era:2,cost:1200,req:['computing','assembly'],hist:'1961',fx:{all:.25},desc:'Programmable machines run factories around the clock.'},
   // ---- Space Age: ~1957–1990
   rocketry:{name:'Rocketry',f:'space',era:3,cost:900,req:['aviation','computing'],hist:'1957',fx:{},desc:'Sputnik reaches orbit. Unlocks the Launch Complex and Low Earth Orbit.'},
@@ -848,6 +894,7 @@ const TECHS = {
   liion:{name:'Lithium-Ion Batteries',f:'chem',era:3,cost:2400,req:['microproc','polymers'],hist:'1991',fx:{},desc:'Goodenough and Yoshino pack lithium into a light, rechargeable cell.'},
   magnets:{name:'Rare-Earth Magnets',f:'chem',era:3,cost:2200,req:['qm','superalloys'],hist:'1982',fx:{power:.1},desc:'Separating the rare earths gives neodymium magnets, yttrium superconductors and europium phosphors.'},
   microproc:{name:'Microprocessor',f:'elec',era:3,cost:2000,req:['semicond'],hist:'1971',fx:{rp:.15},desc:'The Intel 4004 puts a whole computer on one chip.'},
+  machinecontrol:{name:'Machine Control',f:'build',era:3,cost:1600,req:['satellites','hydraulics'],hist:'1990s',fx:{},desc:'Satellite positioning steers blades and buckets to the centimetre. Unlocks the GPS Dozer.'},
   arcology:{name:'Arcologies',f:'eng',era:3,cost:2000,req:['automation','concrete'],hist:'not yet',fx:{},desc:'Self-contained city towers, as Paolo Soleri imagined them.'},
   genetic:{name:'Genetic Engineering',f:'bio',era:3,cost:2200,req:['dna','computing'],hist:'1973',fx:{housing:.15},desc:'Cohen and Boyer splice genes between species. Crops and medicine are transformed.'},
   standard:{name:'The Standard Model',f:'phys',era:3,cost:2400,req:['nucleus','laser'],hist:'1970s',fx:{rp:.15},desc:'Quarks, leptons and forces fit together in one theory.'},
@@ -960,6 +1007,112 @@ function seasonHTML(){ const z=season(), n=nextSeason();
   return `<div class="season-box"><span class="s-ic">${z.ic}</span><div><b>${z.name}</b> <span>${z.note}</span>${n?`<div class="s-next">${n.z.ic} ${n.z.name} in ${fmtLeft(n.in)}${n.z.id==='winter'?'. Get outdoor work in the north done first.':''}</div>`:''}</div></div>`; }
 
 
+/* ============ CONSTRUCTION: builders, crew houses, equipment ============ */
+const ROLES={dig:'Digging',lift:'Lifting',haul:'Hauling',grade:'Grading',concrete:'Concrete',place:'Material handling'};
+const CCLASS={ // 1 = required role (missing it means half speed), 0 = bonus role
+  light:{name:'Light frame',roles:{haul:0,place:0}},
+  earth:{name:'Earthworks',roles:{dig:1,haul:0,grade:0}},
+  heavy:{name:'Heavy industrial',roles:{lift:1,haul:0,concrete:0,place:0}},
+  concrete:{name:'Concrete works',roles:{concrete:1,dig:0,lift:0}},
+  tall:{name:'High-rise & precision',roles:{lift:1,concrete:1,place:0}},
+  space:{name:'Space complex',roles:{lift:1,concrete:0,haul:0}}
+};
+const CLASSOF={cottage:'light',barracks:'light',workshop:'light',university:'light',solarfarm:'light',apartment:'concrete',hydrodam:'concrete',tidal:'concrete',nuclear:'concrete',
+  arcology:'tall',institute:'tall',fusion:'tall',windturbine:'tall',launchpad:'space',shipyard:'space'};
+const classOf=id=>CLASSOF[id]||({extract:'earth',industry:'heavy',power:'heavy',science:'light',housing:'light',space:'space'})[B[id].cat]||'light';
+// tier 0: a Machine Works can build it. time: months at a Machine Works. use: fuel per month while working
+const EQ={
+  horses:{name:'Horse Team',role:'haul',p:.6,tier:0,tech:null,cost:{wood:10,money:40},time:.3,fuel:null,hist:'—',desc:'Draft horses and a freight wagon.'},
+  steamshovel:{name:'Steam Shovel',role:'dig',p:1,tier:0,tech:'steamshovel',cost:{iron:40,wood:10,money:80},time:.8,fuel:'coal',use:.5,hist:'1839',desc:'A coal-fired digger on rails or wheels.'},
+  steamroller:{name:'Steam Roller',role:'grade',p:.8,tier:0,tech:'steamshovel',cost:{iron:40,money:60},time:.6,fuel:'coal',use:.4,hist:'1860s',desc:'Flattens and compacts the ground.'},
+  derrick:{name:'Derrick Crane',role:'lift',p:1,tier:0,tech:'derricks',cost:{iron:30,wood:30,money:70},time:.6,fuel:'coal',use:.4,hist:'1850s',desc:'A guyed mast and steam winch.'},
+  lorry:{name:'Motor Lorry',role:'haul',p:1.2,tier:1,tech:'petroleum',cost:{steel:20,money:150},time:.5,fuel:'fuel',use:.3,hist:'1900s',desc:'Gasoline truck for site deliveries.'},
+  bulldozer:{name:'Bulldozer',role:'grade',p:1.6,tier:1,tech:'crawler',cost:{steel:40,manganese:5,money:250},time:.8,fuel:'fuel',use:.4,hist:'1923',desc:'Crawler tractor with a manganese-steel blade.'},
+  mixer:{name:'Concrete Mixer Truck',role:'concrete',p:1,tier:1,tech:'mixers',cost:{steel:30,money:200},time:.6,fuel:'fuel',use:.3,hist:'1916',desc:'Mixes concrete on the way to the pour.'},
+  forklift:{name:'Forklift',role:'place',p:1,tier:1,tech:'forklifts',cost:{steel:15,lead:5,money:120},time:.4,fuel:null,hist:'1917',desc:'Battery-powered lift truck. The lead battery is the counterweight.'},
+  excavator:{name:'Hydraulic Excavator',role:'dig',p:2,tier:1,tech:'hydraulics',cost:{steel:50,stainless:10,chromium:5,money:600},time:1,fuel:'fuel',use:.4,hist:'1950s',desc:'Chrome-plated rams drive a powerful, precise bucket.'},
+  loader:{name:'Wheel Loader',role:'haul',p:1.6,tier:1,tech:'hydraulics',cost:{steel:40,chromium:3,money:450},time:.8,fuel:'fuel',use:.3,hist:'1950s',desc:'Scoops and moves loose material fast.'},
+  mobilecrane:{name:'Mobile Crane',role:'lift',p:1.6,tier:1,tech:'hydraulics',cost:{steel:60,chromium:5,nickel:5,money:700},time:1.2,fuel:'fuel',use:.4,hist:'1950s',desc:'Telescoping hydraulic boom on a truck.'},
+  pump:{name:'Concrete Pump',role:'concrete',p:2,tier:1,tech:'concpump',cost:{stainless:20,chromium:5,steel:20,money:800},time:1,fuel:'fuel',use:.3,hist:'1950s',desc:'Boom pump that places concrete anywhere on site.'},
+  towercrane:{name:'Tower Crane',role:'lift',p:2.2,tier:1,tech:'towercrane',cost:{steel:120,stainless:10,money:1200},time:1.5,fuel:null,hist:'1949',desc:'Electric crane that climbs with the building.'},
+  gpsdozer:{name:'GPS Dozer',role:'grade',p:2.5,tier:1,tech:'machinecontrol',cost:{steel:40,electronics:10,chromium:5,money:2000},time:1,fuel:'fuel',use:.4,hist:'1990s',desc:'Satellite-guided blade grades to the centimetre.'},
+  crawlertrans:{name:'Heavy-Lift Crawler',role:'lift',p:3,tier:1,tech:'rocketry',cost:{steel:400,stainless:60,electronics:20,money:8000},time:4,fuel:'fuel',use:1,hist:'1965',desc:'A building-sized crawler that carries whole rocket stages.'},
+  robot:{name:'Construction Robot',role:'any',p:2.5,tier:1,tech:'robotics',cost:{alloy:10,electronics:30,batteries:10,money:5000},time:1.2,fuel:null,hist:'2020s',desc:'Autonomous builder that can fill any role on a site.'}
+};
+const FACS={machineworks:{tier:0,speed:1},equipfactory:{tier:1,speed:2}};
+const CH_R=5; // crew house reach, in tiles
+const ORIGT=id=>B[id].time/BUILD_SPEED;
+const onEarth=q=>q.kind==='build'&&!!REG[q.rid]&&REG[q.rid].where==='earth'&&!!RT[q.rid];
+function stdCrew(q){ return q.kind==='build'?1+Math.ceil(ORIGT(q.id)*0.5):({exp:2,rocket:4,module:8,project:5})[q.kind]||2; }
+const builderPool=()=>Math.max(1,Math.round(S.pop*(S.bpct==null?.35:S.bpct)));
+function assignLabor(){ let pool=builderPool(); for(const q of S.queue) q.w=0;
+  const Q=S.queue.filter(q=>!(q.ship>0));
+  for(const q of Q){ if(pool<=0) break; const want=q.wpin!=null?q.wpin:Math.ceil(stdCrew(q)/2), g=Math.min(want,pool); q.w=g; pool-=g; } // half crews first, so several jobs run
+  for(const q of Q){ if(pool<=0) break; if(q.wpin!=null) continue; const g=Math.min(stdCrew(q)-q.w,pool); if(g>0){ q.w+=g; pool-=g; } }
+  S.bw=S.queue.reduce((a,q)=>a+(q.w||0),0); }
+const laborX=q=>q.w>0?Math.min(1.5,Math.pow(q.w/stdCrew(q),0.6)):0;
+function crewHouses(q){ if(!onEarth(q)||q.tile==null) return {m:0,o:0,need:0,cls:classOf(q.id||'cottage')};
+  const cls=classOf(q.id), t=TL[q.tile]; let m=0,o=0;
+  for(const k in (S.at||{})){ const a=S.at[k]; if(a.id!=='barracks') continue; const u=TL[+k]; if(Math.max(Math.abs(u.x-t.x),Math.abs(u.y-t.y))>CH_R) continue; if((a.spec||'light')===cls) m++; else o++; }
+  return {m,o,need:Math.max(1,Math.ceil(stdCrew(q)/4)),cls}; }
+function houseX(q){ const h=crewHouses(q); return h.need?1+0.5*Math.min(1,(h.m+0.4*h.o)/h.need):1; }
+let EQF={}; // share of each fuel the working fleet actually got
+const fuelOK=t=>{ const f=EQ[t].fuel; return f&&EQF[f]!=null?EQF[f]:1; };
+const unitsOn=q=>(S.fleet||[]).filter(u=>u.job===q.uid);
+function eqRoles(q){ const cls=CCLASS[classOf(q.id)], big=stdCrew(q)>=7, out={};
+  for(const [r,req] of Object.entries(cls.roles)) out[r]={req:!!req,n:big?2:1,units:[],P:0};
+  for(const u of unitsOn(q)) if(out[u.as]) out[u.as].units.push(u);
+  for(const r in out){ const ps=out[r].units.filter(u=>u.st==='work').map(u=>EQ[u.t].p*fuelOK(u.t)).sort((a,b)=>b-a); out[r].P=ps.reduce((a,p,i)=>a+p*Math.pow(.5,i),0); }
+  return out; }
+const roleX=s=>s.req?(s.P>0?0.6+0.4*s.P:0.5):1+0.2*s.P;
+function eqX(q){ if(!onEarth(q)) return 1; let f=1; for(const s of Object.values(eqRoles(q))) f*=roleX(s); return Math.min(4,f); }
+function jobRate(q){ if(q.ship>0) return 0; const l=laborX(q); return l?l*eqX(q)*houseX(q)*workRate(q):0; }
+function speedKm(rid){ let v=2; if(T('railways')) v=5; if(S.breaks&&S.breaks.railroad==='built') v=9; if(T('petroleum')) v+=2; if(isWinter()) v*=.7; return v; } // tiles per day
+function travelDays(a,b,heavy){ if(a===b||!RT[a]||!RT[b]) return 0; const A=TL[RT[a].anchor], Bt=TL[RT[b].anchor];
+  return Math.max(1,Math.ceil(Math.hypot(A.x-Bt.x,A.y-Bt.y)/(speedKm()*(heavy?.6:1)))); }
+function bestUnit(role,q,maxEta){ let best=null,bs=-1;
+  for(const u of S.fleet||[]){ if(u.st!=='idle') continue; const e=EQ[u.t]; if(e.role!==role&&e.role!=='any') continue;
+    const eta=travelDays(u.rid,q.rid,true); if(eta>maxEta) continue; const sc=e.p/(1+eta/30); if(sc>bs){ bs=sc; best=u; } } return best; }
+function sendUnit(u,q,r){ u.job=q.uid; u.as=r; const eta=travelDays(u.rid,q.rid,true); if(eta<=0){ u.st='work'; u.rid=q.rid; } else { u.st='move'; u.to=q.rid; u.eta=eta; u.eta0=eta; } }
+function freeUnit(u){ u.job=null; if(u.st==='work') u.st='idle'; } // a unit on the road keeps going and waits where it arrives
+function releaseUnits(q){ for(const u of S.fleet||[]) if(u.job===q.uid) freeUnit(u); }
+function foreman(){ if(!S.fleet) S.fleet=[];
+  for(const q of S.queue){ if(!onEarth(q)||q.manual) continue;
+    const R=eqRoles(q), rate=jobRate(q)||Math.max(laborX(q),.4)*.6, remain=(q.ship||0)+q.left*30/rate;
+    for(const [r,sl] of Object.entries(R).sort((a,b)=>b[1].req-a[1].req)) while(sl.units.length<sl.n){ const u=bestUnit(r,q,remain*.6); if(!u) break; sendUnit(u,q,r); sl.units.push(u); } } }
+function moveFleet(){ for(const u of S.fleet||[]){ if(u.st!=='move') continue; u.eta-=1; if(u.eta>0) continue;
+  u.rid=u.to; delete u.to; const q=u.job&&S.queue.find(x=>x.uid===u.job); if(q){ u.st='work'; } else { u.st='idle'; u.job=null; } } }
+// ---- factories
+const eqOK=(t,tier)=>{ const e=EQ[t]; return e.tier<=tier&&(!e.tech||T(e.tech)); };
+const facTiles=()=>Object.keys(S.at||{}).filter(k=>FACS[S.at[k].id]).map(Number);
+function facState(k){ if(!S.fac) S.fac={}; return S.fac[k]||(S.fac[k]={auto:true,orders:[],cur:null}); }
+function eqShort(){ const need={}, w={}, have={};
+  for(const q of S.queue){ if(!onEarth(q)) continue; for(const [r,s] of Object.entries(eqRoles(q))){ need[r]=(need[r]||0)+s.n; w[r]=(w[r]||0)+s.n*(s.req?2:1); } }
+  for(const u of S.fleet||[]){ const r=EQ[u.t].role; have[r]=(have[r]||0)+1; }
+  for(const k in S.fac||{}){ const c=S.fac[k].cur; if(c){ const r=EQ[c.t].role; have[r]=(have[r]||0)+1; } }
+  const out={}; for(const r in need){ const sh=need[r]-(have[r]||0)-(have.any||0); if(sh>0) out[r]=sh*w[r]/need[r]; } return out; } // >1 per unit short means a required role
+function bestType(role,tier,mustAfford){ const c=Object.keys(EQ).filter(t=>EQ[t].role===role&&eqOK(t,tier)).sort((a,b)=>EQ[b].p-EQ[a].p);
+  return mustAfford?c.find(t=>afford(EQ[t].cost)):c[0]; }
+function autoPick(tier){ const sh=eqShort(); // required machines whenever affordable; bonus machines only when materials are plentiful
+  for(const r of Object.keys(sh).sort((a,b)=>sh[b]-sh[a])){ const req=S.queue.some(q=>onEarth(q)&&CCLASS[classOf(q.id)].roles[r]===1);
+    const c=Object.keys(EQ).filter(t=>EQ[t].role===r&&eqOK(t,tier)).sort((a,b)=>EQ[b].p-EQ[a].p);
+    const t=c.find(t=>{ const k=req?1:3; return Object.entries(EQ[t].cost).every(([x,v])=>(S.res[x]||0)>=v*k); }); if(t) return t; } return null; }
+function runFactories(fr,eff){ for(const k of facTiles()){ const a=S.at[k], fd=FACS[a.id], st=facState(k), b=S.bld[a.rid]&&S.bld[a.rid][a.id]; if(!b||!b.on) continue;
+  if(!st.cur){ let t=null;
+    while(st.orders.length&&!eqOK(st.orders[0],fd.tier)) st.orders.shift();
+    if(st.orders.length){ if(afford(EQ[st.orders[0]].cost)) t=st.orders.shift(); }
+    else if(st.auto) t=autoPick(fd.tier);
+    if(t){ pay(EQ[t].cost); st.cur={t,left:EQ[t].time,total:EQ[t].time}; } }
+  if(st.cur){ const e=eff&&eff[a.rid+':'+a.id]?eff[a.rid+':'+a.id].e:1; st.cur.left-=fr*fd.speed*e;
+    if(st.cur.left<=1e-6){ S.fleet.push({uid:S.uid++,t:st.cur.t,rid:a.rid,st:'idle',job:null}); log(`${EQ[st.cur.t].name} rolls out of the ${B[a.id].name} in ${REG[a.rid].name}.`); st.cur=null; } } } }
+function orderEq(role){ const fs=facTiles().map(k=>({k,tier:FACS[S.at[k].id].tier,n:facState(k).orders.length+(facState(k).cur?1:0)}));
+  if(!fs.length) return 'Build a Machine Works first.';
+  let best=null; for(const f of fs){ const t=bestType(role,f.tier,false); if(!t) continue; if(!best||EQ[t].p>EQ[best.t].p||(EQ[t].p===EQ[best.t].p&&f.n<best.n)) best={...f,t}; }
+  if(!best) return `None of your factories can build ${ROLES[role].toLowerCase()} equipment yet.`;
+  facState(best.k).orders.push(best.t); return `${EQ[best.t].name} ordered at the ${B[S.at[best.k].id].name} in ${REG[S.at[best.k].rid].name}.`; }
+const fleetCount=st=>(S.fleet||[]).filter(u=>!st||u.st===st).length;
+
+/* Regions: every place on the map. dep = deposit sites, plots = room for non-mining buildings. */
 const REG = {
   leo:{name:'Low Earth Orbit',biome:'Orbit, 400 km',where:'space',tech:'rocketry',cost:{rocket:1},time:3,dep:{},plots:1,reward:{rp:400},
     trait:'The Orbital Shipyard can only be built here.',text:'First orbit. The data alone is worth a fortune in research.'},
@@ -1060,6 +1213,32 @@ async function loadArt(){
     HIRES=true; return true;
   }catch(e){ console.warn('Art files missing, using built-in tiles',e); return null; }
 }
+function makeEqSprites(){
+  const Y='#e8b030',Yd='#a87418',K='#26221e',G='#9aa0a8',Gd='#5a5f66',R='#a8442c',Br='#c9a050',Bn='#7a5232',W='#e6edf4',Bl='#3c6ea8';
+  const wheel=(p,x,y,r=2)=>{ p(x-r+1,y-r,2*r-2,2*r,K); p(x-r,y-r+1,2*r,2*r-2,K); p(x,y,1,1,G); };
+  const track=(p,x,y,w)=>{ p(x,y,w,3,K); for(let i=x+1;i<x+w-1;i+=2) p(i,y+1,1,1,Gd); };
+  const S2={
+    horses:p=>{ p(1,7,6,3,Bn); p(6,5,2,3,Bn); p(7,4,2,2,Bn); p(1,10,1,3,Bn); p(5,10,1,3,Bn); p(0,7,1,3,'#3a2414'); p(8,8,7,3,'#8a663c'); p(8,7,7,1,'#5a3e22'); wheel(p,10,12); wheel(p,14,12); },
+    steamshovel:p=>{ p(1,6,8,5,'#3a3a40'); p(2,2,2,4,K); p(1,1,4,1,Br); p(4,7,3,2,R); track(p,0,11,10); for(let i=0;i<5;i++) p(8+i,5-i,1,2,Gd); p(12,1,1,8,Gd); p(11,8,4,3,G); p(11,10,4,1,Gd); },
+    steamroller:p=>{ p(3,4,8,5,'#3a3a40'); p(9,1,2,4,K); p(8,0,4,1,Br); p(4,5,3,2,R); p(0,8,5,6,Gd); p(1,9,3,4,G); wheel(p,12,11,3); },
+    derrick:p=>{ p(3,1,1,13,Bn); for(let i=0;i<10;i++) p(3+i,2+i,1,1,Bn); p(12,11,1,3,Gd); p(2,0,3,1,Br); p(0,13,16,2,'#4a3a2a'); p(5,10,3,3,'#3a3a40'); p(8,12,1,1,R); p(12,9,1,2,G); },
+    lorry:p=>{ p(1,5,9,6,'#6a7a3a'); p(1,4,9,1,'#56632e'); p(10,6,5,5,'#4a5a2a'); p(11,7,3,2,'#bfe0ff'); p(0,10,16,1,K); wheel(p,4,12); wheel(p,12,12); },
+    bulldozer:p=>{ p(4,5,8,6,Y); p(5,2,5,4,Yd); p(6,3,3,2,'#bfe0ff'); p(10,3,1,3,K); track(p,3,11,11); p(0,6,2,7,G); p(1,6,3,1,Gd); p(2,9,2,1,Gd); },
+    mixer:p=>{ p(1,9,15,2,K); for(let i=0;i<5;i++) p(2+i,4+(i<2?1:0),2,5-(i<2?1:0),i%2?W:'#c8d0d8'); p(7,4,3,5,'#c8d0d8'); p(10,6,5,4,Y); p(11,7,3,2,'#bfe0ff'); wheel(p,4,12); wheel(p,12,12); },
+    forklift:p=>{ p(4,6,7,5,Y); p(5,3,1,4,K); p(9,3,1,4,K); p(5,2,5,1,K); p(10,8,2,3,Gd); p(12,1,1,12,Gd); p(12,12,4,1,G); p(12,9,4,1,G); wheel(p,5,12); wheel(p,10,12); },
+    excavator:p=>{ p(1,6,8,5,Y); p(2,4,4,3,Yd); p(3,5,2,1,'#bfe0ff'); track(p,0,11,10); p(8,3,1,4,Yd); for(let i=0;i<5;i++) p(8+i,2+(i>>1),1,2,Y); p(12,3,1,6,Yd); p(11,8,4,3,G); p(10,5,2,1,W); },
+    loader:p=>{ p(3,5,8,5,Y); p(4,2,4,4,Yd); p(5,3,2,2,'#bfe0ff'); p(11,6,2,2,Gd); p(13,6,3,6,G); p(13,11,3,1,Gd); wheel(p,5,12,3); wheel(p,11,12,3); },
+    mobilecrane:p=>{ p(1,8,12,3,Y); p(2,5,4,4,Yd); p(3,6,2,2,'#bfe0ff'); for(let i=0;i<11;i++) p(5+i,7-(i>>1)*1,1,2,Yd); p(15,2,1,6,K); p(14,8,2,1,G); p(0,11,16,1,K); wheel(p,3,13); wheel(p,7,13); wheel(p,11,13); },
+    pump:p=>{ p(1,8,14,3,'#c8d0d8'); p(10,5,5,4,Y); p(11,6,3,2,'#bfe0ff'); p(3,7,2,2,Gd); for(let i=0;i<7;i++) p(3+i,6-i*.7|0,1,2,Y); p(10,0,1,6,Yd); p(10,0,4,1,Yd); p(13,0,1,4,K); wheel(p,4,12); wheel(p,12,12); },
+    towercrane:p=>{ p(5,1,2,14,Y); for(let y=2;y<14;y+=2) p(5,y,2,1,Yd); p(0,1,16,2,Y); p(0,2,16,1,Yd); p(1,3,3,2,'#6a6a70'); p(13,3,1,5,K); p(12,8,3,1,G); p(4,15,4,1,K); },
+    gpsdozer:p=>{ p(4,5,8,6,Y); p(5,2,5,4,Yd); p(6,3,3,2,'#bfe0ff'); p(7,0,1,2,K); p(6,0,3,1,'#5fd0b2'); track(p,3,11,11); p(0,6,2,7,G); p(1,6,3,1,Gd); },
+    crawlertrans:p=>{ p(0,6,16,4,'#6a707a'); p(1,4,14,2,'#8a909a'); p(2,2,12,2,W); p(3,1,3,1,R); track(p,0,10,7); track(p,9,10,7); p(4,7,8,2,'#4a4e55'); },
+    robot:p=>{ p(5,1,6,4,G); p(6,2,1,1,'#5fd0b2'); p(9,2,1,1,'#5fd0b2'); p(4,5,8,6,W); p(5,6,6,4,'#c8d0d8'); p(2,6,2,5,G); p(12,6,2,5,G); p(1,11,3,1,Gd); p(12,11,3,1,Gd); p(5,11,2,4,Gd); p(9,11,2,4,Gd); p(7,7,2,2,Bl); }
+  };
+  for(const k in S2){ SPR['eq_'+k]=spr(16,16,S2[k]); delete SPRURL['eq_'+k]; }
+}
+function tintSpr(src,col,a){ if(!src) return src; const c=mkc(src.width,src.height), g=c.getContext('2d'); g.drawImage(src,0,0); g.globalCompositeOperation='source-atop'; g.globalAlpha=a; g.fillStyle=col; g.fillRect(0,0,c.width,c.height); return c; }
+function makeFactorySprites(){ SPR.machineworks=tintSpr(SPR.furnace,'#e8b030',.35); SPR.equipfactory=tintSpr(SPR.steelmill,'#e8b030',.4); delete SPRURL.machineworks; delete SPRURL.equipfactory; }
 const icon=(k,cls='')=>`<img class="px ${cls}" src="${sprURL(k)}" alt="">`;
 
 /* ============ EARTH: PROCEDURAL WORLD ============ */
@@ -1471,7 +1650,7 @@ function fxText(k,v){ if(k==='sight') return `${FXTXT[k]} +${v} tile`; const neg
 const housing = () => 10 + Math.floor(ORDER.reduce((a,id)=>a+(B[id].housing||0)*nOf(id),0)*(1+(allFx().housing||0)));
 const buildTime = id => B[id].time*(1-Math.min(.6,allFx().build||0));
 function modCost(id){ const f=1-Math.min(.5,allFx().mods||0), o={}; for(const [k,v] of Object.entries(MODS[id].cost)) o[k]=k==='rp'?v:Math.ceil(v*f); return o; }
-const crews = () => 2 + nOf('barracks');
+const crews = () => S.queue.filter(q=>q.w>0).length; // jobs with builders on them
 const eraOf = () => Object.keys(S.techs).reduce((a,t)=>Math.max(a,TECHS[t].era),0);
 const wage = () => 2*(1+S.era);
 const have = k => k==='rocket' ? S.items.rocket : (S.res[k]||0);
@@ -1510,7 +1689,8 @@ function ioText(d){
   else if(d.out) parts.push(`<b>+${flow(d.out)}</b>/mo`);
   else if(d.in) parts.push(`burns ${flow(d.in)}/mo`);
   if(d.housing) parts.push(`<b>+${d.housing} residents</b>`);
-  if(d.crews) parts.push(`<b>+1 crew</b>`);
+  if(d.crewhouse) parts.push(`<b>speeds building nearby</b>`);
+  if(d.factory!=null) parts.push(`<b>builds equipment</b>`);
   return parts.join(' · ');
 }
 
@@ -1522,8 +1702,9 @@ function flows(fr=1){
   GM=gradeMap();
   for(const rid in S.bld) for(const id of ORDER){ const b=S.bld[rid][id]; if(b&&b.n) items.push({rid,id,b,d:B[id],x:bonusX(rid,id)*(GM[rid+':'+id]||1)}); }
   let jobs=0; for(const it of items) if(it.d.workers) jobs+=it.b.on*it.d.workers;
-  const staff = jobs>0?Math.min(1,S.pop/jobs):1;
-  const employed = Math.min(S.pop,jobs);
+  const bw=Math.min(S.bw||0,S.pop), free=S.pop-bw;
+  const staff = jobs>0?Math.min(1,free/jobs):1;
+  const employed = Math.min(free,jobs)+bw;
   const eff={};
   const inRatio=(inp,k)=>{ let r=1, why=null; if(inp&&k>0) for(const x in inp){ const need=inp[x]*k*fr; const q=(st[x]||0)/need; if(q<r){r=q; why=x;} } return [Math.max(0,r),why]; };
   const use=(inp,k)=>{ if(inp) for(const x in inp) st[x]=Math.max(0,st[x]-inp[x]*k*fr); };
@@ -1544,15 +1725,19 @@ function flows(fr=1){
     eff[it.rid+':'+it.id]={e,why};
   }
   st.money+=employed*wage()*fr*(1+(fx.money||0));
-  return {st,jobs,staff,employed,supply,demand,pr,mult:gm,fx,eff};
+  const dem={}, eqf={}; for(const u of S.fleet||[]){ if(u.st!=='work') continue; const e=EQ[u.t]; if(e.fuel) dem[e.fuel]=(dem[e.fuel]||0)+e.use; }
+  for(const k in dem){ const need=dem[k]*fr, r=need>0?Math.min(1,(st[k]||0)/need):1; eqf[k]=r; st[k]=Math.max(0,(st[k]||0)-need*r); }
+  EQF=eqf;
+  return {st,jobs,staff,employed,supply,demand,pr,mult:gm,fx,eff,bw};
 }
 const daysIn=m=>new Date(1900+Math.floor(m/12),m%12+1,0).getDate();
 function tick(){ // one day
   const dim=daysIn(S.month), fr=1/dim;
-  S.res=flows(fr).st;
-  const c=crews(); const done=[];
-  S.queue.slice(0,c).forEach(q=>{ q.left-=fr*workRate(q); if(q.left<=1e-6) done.push(q); });
-  for(const q of done){ S.queue.splice(S.queue.indexOf(q),1); complete(q); }
+  assignLabor(); const FL=flows(fr); S.res=FL.st;
+  foreman(); const done=[];
+  S.queue.forEach(q=>{ if(q.ship>0){ q.ship=Math.max(0,q.ship-1); return; } q.left-=fr*jobRate(q); if(q.left<=1e-6) done.push(q); });
+  for(const q of done){ S.queue.splice(S.queue.indexOf(q),1); releaseUnits(q); complete(q); }
+  moveFleet(); runFactories(fr,FL.eff);
   for(const v of [...S.voyages]){ v.left-=fr; if(v.left<=1e-6){ S.voyages.splice(S.voyages.indexOf(v),1); arrive(v); } }
   for(const k in S.res) if(S.res[k]>0) S.seen[k]=true;
   S.day=(S.day||0)+1;
@@ -1620,17 +1805,18 @@ function newGame(seed){
     queue:[], modules:{hull:false,drive:false,life:false,nav:false,cryo:false},
     voyages:[], reached:{}, ships:0,
     fog, found:DEPT.map((d,j)=>j).filter(j=>DEPT[j].rid==='home'), dud:[], con:{offer:null,active:[],next:8,done:0,failed:0},
+    fleet:[{uid:900000,t:'horses',rid:'home',st:'idle',job:null}], fac:{}, bpct:.35,
     car:{x:TL[st].x,y:TL[st].y,kind:'wagon',dir:1}, odo:0,
-    log:[{m:0,t:'January 1900. A mill town, two crews, a Steam Wagon, and a very long way to go.',big:true}]
+    log:[{m:0,t:'January 1900. A mill town, a few builders, a horse team, a Steam Wagon, and a very long way to go.',big:true}]
   };
 }
 function migrate(o){ // saves from before the procedural world can't be carried over
   if(!o) return null;
-  if(o.v>=4&&o.seed!=null){ genWorld(o.seed); return Object.assign(newGame.shape(),o); }
+  if(o.v>=4&&o.seed!=null){ genWorld(o.seed); const r=Object.assign(newGame.shape(),o); if(!o.fleet) r.fleet=[{uid:900000,t:'horses',rid:'home',st:'idle',job:null}]; return r; }
   try{ localStorage.setItem(KEY+'-classic',JSON.stringify(o)); }catch(e){}
   OLDSAVE=true; return null;
 }
-newGame.shape=()=>({v:4,fastBuild:true,month:0,day:0,speed:1,uid:1,pop:8,era:0,eraAt:{0:0},res:{},items:{rocket:0},seen:{},bld:{},techs:{},explored:{home:true},queue:[],modules:{hull:false,drive:false,life:false,nav:false,cryo:false},voyages:[],reached:{},ships:0,found:[],dud:[],con:{offer:null,active:[],next:8,done:0,failed:0},odo:0,log:[]});
+newGame.shape=()=>({v:4,fastBuild:true,month:0,day:0,speed:1,uid:1,pop:8,era:0,eraAt:{0:0},res:{},items:{rocket:0},seen:{},bld:{},techs:{},explored:{home:true},queue:[],modules:{hull:false,drive:false,life:false,nav:false,cryo:false},voyages:[],reached:{},ships:0,found:[],dud:[],con:{offer:null,active:[],next:8,done:0,failed:0},fleet:[],fac:{},bpct:.35,odo:0,log:[]});
 let OLDSAVE=false;
 let S;
 const ui={screen:'map',view:'earth',sel:'home',placing:null,placeMsg:null,tapMode:'drive',path:[],follow:true,fly:null,sched:false,card:false};
@@ -1773,7 +1959,8 @@ function rocketReason(){
 const launchReady = () => Object.values(S.modules).every(Boolean)&&S.res.he3>=LAUNCH_HE3;
 function enqueue(q,cost){ pay(cost); S.queue.push({uid:S.uid++,...q,paid:cost,total:q.left}); }
 function setEra(){ const e=eraOf(); if(e>S.era){ S.era=e; S.eraAt[e]=S.month; log(`The ${ERAS[e]} begins.`,true); } }
-function buildAt(id,rid,tile){ if(canBuildAt(id,rid)) return false; if(tile==null) tile=autoTile(id,rid); const q={kind:'build',id,rid,left:buildTime(id)}; if(tile!=null) q.tile=tile; enqueue(q,costAt(id,rid)); return true; }
+function buildAt(id,rid,tile){ if(canBuildAt(id,rid)) return false; if(tile==null) tile=autoTile(id,rid); const q={kind:'build',id,rid,left:buildTime(id)}; if(tile!=null) q.tile=tile;
+  if(REG[rid].where==='earth'){ q.ship=Math.max(1,travelDays('home',rid)); q.ship0=q.ship; } enqueue(q,costAt(id,rid)); return true; }
 function viewFor(rid){ return REG[rid].where==='space'?'solar':'earth'; }
 function regionSub(rid){
   const s=expState(rid);
@@ -1894,13 +2081,26 @@ const actions = {
     log(`Starship ${romanOf(S.ships)} launches for ${DESTS[d.id].name}. Arrival expected ${yearOf(S.month+months)}.`,true);
   },
   up:d=>moveQ(+d.uid,-1), down:d=>moveQ(+d.uid,1),
-  cancel:d=>{ const i=S.queue.findIndex(q=>q.uid===+d.uid); if(i<0) return; const q=S.queue[i]; refund(q.paid, q.left>=q.total-1e-9?1:0.5); S.queue.splice(i,1); },
+  cancel:d=>{ const i=S.queue.findIndex(q=>q.uid===+d.uid); if(i<0) return; const q=S.queue[i]; refund(q.paid, q.left>=q.total-1e-9?1:0.5); S.queue.splice(i,1); releaseUnits(q); if(ui.mod&&ui.mod.k==='proj'&&ui.mod.id===q.uid) actions.close(); },
   newgame:()=>showModal(`<h3>Start over?</h3><p>This wipes the current colony and returns you to January 1900 in a brand-new world.</p><div class="acts"><button class="ghost" data-act="close">Keep playing</button><button class="btn" data-act="reset">Start a new game</button></div>`),
   reset:()=>{ S=newGame(); syncTiles(); fogDirty=true; Object.assign(ui,{screen:'map',view:'earth',sel:'home',placing:null,placeMsg:null,path:[],follow:true,fly:null,card:false,sched:false}); fogDirty=true; resetCams(); hideModal(); save(); },
   contract:d=>{ const C=S.con; if(!C||!C.offer) return hideModal(); const c=C.offer; C.offer=null;
     if(d.v==='yes'){ c.due=S.month+c.months; C.active.push(c); log(`Contract accepted: ${fmt(c.need)} ${RES[c.k].toLowerCase()} for ${c.who} by ${dateStr(c.due)}.`); }
     hideModal(); },
   deliver:d=>deliver(+d.uid),
+  proj:d=>openMod('proj',+d.uid),
+  pw:d=>{ const q=ui.mod&&findQ(ui.mod.id); if(!q) return; q.wpin=Math.max(0,Math.min(99,(q.wpin!=null?q.wpin:q.w||0)+ +d.d)); assignLabor(); },
+  pwauto:()=>{ const q=ui.mod&&findQ(ui.mod.id); if(q){ delete q.wpin; assignLabor(); } },
+  pman:()=>{ const q=ui.mod&&findQ(ui.mod.id); if(q) q.manual=!q.manual; },
+  padd:d=>{ const q=ui.mod&&findQ(ui.mod.id); if(!q) return; const u=bestUnit(d.r,q,1e9); if(u) sendUnit(u,q,d.r); },
+  prem:d=>{ const q=ui.mod&&findQ(ui.mod.id); const u=(S.fleet||[]).find(x=>x.uid===+d.u); if(u) freeUnit(u); if(q) q.manual=true; },
+  porder:d=>{ toast(orderEq(d.r)); },
+  fac:d=>openMod('fac',+d.k), ch:d=>openMod('ch',+d.k), fleet:()=>openMod('fleet'),
+  facauto:()=>{ const st=facState(ui.mod.id); st.auto=!st.auto; },
+  facadd:d=>{ facState(ui.mod.id).orders.push(d.t); },
+  facdel:d=>{ facState(ui.mod.id).orders.splice(+d.i,1); },
+  chspec:d=>{ const a=S.at[ui.mod.id]; if(a) a.spec=d.c; },
+  bpct:d=>{ S.bpct=Math.max(.1,Math.min(.8,Math.round(((S.bpct==null?.35:S.bpct)+.05*d.d)*100)/100)); assignLabor(); },
   close:()=>{ if(S.con&&S.con.offer){ S.con.offer=null; } hideModal(); }
 };
 function moveQ(uid,dir){ const i=S.queue.findIndex(q=>q.uid===uid), j=i+dir; if(i<0||j<0||j>=S.queue.length) return; [S.queue[i],S.queue[j]]=[S.queue[j],S.queue[i]]; }
@@ -1910,7 +2110,7 @@ document.addEventListener('click',e=>{
   const b=e.target.closest('[data-act]'); if(!b||b.disabled) return;
   if(b.tagName==='SUMMARY') e.preventDefault();
   const fn=actions[b.dataset.act]; if(!fn) return;
-  ui.shift=e.shiftKey; fn(b.dataset); ui.shift=false; save(); render();
+  ui.shift=e.shiftKey; fn(b.dataset); ui.shift=false; save(); render(); refreshMod();
 });
 const DIRS={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0],w:[0,-1],s:[0,1],a:[-1,0],d:[1,0],W:[0,-1],S:[0,1],A:[-1,0],D:[1,0]};
 document.addEventListener('keydown',e=>{
@@ -1928,8 +2128,8 @@ window.addEventListener('blur',()=>KEYS.clear());
 
 /* ============ MODAL ============ */
 const modal=document.getElementById('modal');
-function showModal(html,cls=''){ modal.innerHTML=`<div class="dlg ${cls}" role="dialog" aria-modal="true">${html}</div>`; modal.hidden=false; const b=modal.querySelector('.btn'); if(b) b.focus(); }
-function hideModal(){ modal.hidden=true; modal.innerHTML=''; }
+function showModal(html,cls=''){ modal.innerHTML=`<div class="dlg ${cls}" role="dialog" aria-modal="true">${html}</div>`; modal.hidden=false; const b=modal.querySelector('.btn'); if(b) b.focus({preventScroll:true}); }
+function hideModal(){ modal.hidden=true; modal.innerHTML=''; ui.mod=null; }
 function showWin(dest, first){
   const d=DESTS[dest]; S.speed=0;
   showModal(`<h3>${first?'We reached the stars':'Another colony'}</h3>
@@ -2026,7 +2226,8 @@ function renderBanner(){
     <div class="bn-res">
       <button class="rc click" data-act="colony" title="Residents / housing. Open the Colony screen"><span class="n">Pop</span>${S.pop}/${h}</button>
       ${F.demand||F.supply?`<button class="rc click ${prPct<1?'alert':''}" data-act="colony" title="Power supply / demand"><span class="n">Power</span><span class="${prPct<1?'neg':''}">${fmt(F.supply)}/${fmt(F.demand)}</span></button>`:''}
-      <button class="rc click ${idle>0?'alert':''}" data-act="sched" aria-expanded="${ui.sched}" title="Work schedule"><span class="n">Crews</span>${busy}/${c}${idle>0?'<span class="d warn">idle</span>':''}</button>
+      ${(()=>{ const pool=builderPool(), bw=S.bw||0, stalled=S.queue.some(q=>!(q.ship>0)&&!q.w), idleB=!S.queue.length;
+        return `<button class="rc click ${stalled||idleB?'alert':''}" data-act="sched" aria-expanded="${ui.sched}" title="Builders working / builders available (${Math.round((S.bpct==null?.35:S.bpct)*100)}% of residents). Open the work schedule"><span class="n">Builders</span>${bw}/${pool}${idleB?'<span class="d warn">idle</span>':stalled?'<span class="d warn">short</span>':''}</button>`; })()}
       ${conChip()}
       ${chips}
     </div>
@@ -2057,7 +2258,8 @@ function renderLedger(){
     <div class="row"><span class="k">Residents</span><span class="v">${S.pop}/${h}</span></div>
     <div class="row"><span class="k">Jobs filled</span><span class="v ${staffPct<100?'warn':''}">${Math.round(F.employed)}/${F.jobs} · ${staffPct}%</span></div>
     <div class="row"><span class="k">Power</span><span class="v ${prPct<100?'neg':''}">${fmt(F.supply)}/${fmt(F.demand)} MW</span></div>
-    <div class="row"><span class="k">Crews busy</span><span class="v">${busy}/${c}</span></div>
+    <div class="row"><span class="k">Builders</span><span class="v">${S.bw||0}/${builderPool()}</span></div>
+    <div class="row"><span class="k">Equipment</span><span class="v">${fleetCount('work')} working · ${fleetCount('idle')} idle</span></div>
     <div class="row"><span class="k">Wage tax</span><span class="v">$${wage()}/worker</span></div>
     ${F.mult>1?`<div class="row"><span class="k">Output bonus</span><span class="v pos">+${Math.round((F.mult-1)*100)}%</span></div>`:''}
     ${F.fx.rp?`<div class="row"><span class="k">Research bonus</span><span class="v pos">+${Math.round(F.fx.rp*100)}%</span></div>`:''}
@@ -2161,7 +2363,8 @@ function bTip(rid,id,off){
   if(b.on&&ef&&ef.e<0.999&&(d.workers||d.power||d.in)) l.push(`Running at ${Math.round(ef.e*100)}%${ef.why?`, short on ${ef.why}`:''}`);
   return l.join('|');
 }
-function qTip(q){ const pos=S.queue.indexOf(q); return `Under construction: ${B[q.id].name}|${pos<crews()?`${fmtLeft(q.left/workRate(q))} left${workRate(q)!==1?` (${season().name}: ${Math.round(workRate(q)*100)}% speed)`:''}`:'Waiting for a free crew'}`; }
+function jobLeft(q){ if(q.ship>0) return `materials arrive in ${q.ship} d`; const r=jobRate(q); return r>0?`${fmtLeft(q.left/r)} left`:'waiting for builders'; }
+function qTip(q){ return `Under construction: ${B[q.id].name}|${jobLeft(q)}|${q.w||0} builders · ${unitsOn(q).filter(u=>u.st==='work').length} machines on site|Tap in Look mode to manage`; }
 function computeObjects(){
   OBJS=[]; OBJAT=new Map(); SEEN=new Set(); VALID=new Map();
   for(let i=0;i<TL.length;i++) if(S.fog[i]) SEEN.add(TL[i].rid);
@@ -2172,7 +2375,7 @@ function computeObjects(){
   for(const k of Object.keys(S.at||{}).sort((a,b)=>a-b)){ const {id,rid}=S.at[k], b=S.bld[rid]&&S.bld[rid][id]; if(!b) continue;
     const key=rid+':'+id, c=lit[key]||0; lit[key]=c+1; const off=!!(B[id].workers||B[id].power)&&c>=b.on;
     add(+k,{s:id,dim:off,tip:bTip(rid,id,off)}); }
-  for(const q of S.queue) if(q.kind==='build'&&q.tile!=null) add(q.tile,{s:'scaffold',tip:qTip(q)});
+  for(const q of S.queue) if(q.kind==='build'&&q.tile!=null) add(q.tile,{s:'scaffold',tip:qTip(q),eq:unitsOn(q).filter(u=>u.st==='work').slice(0,3).map(u=>u.t),ship:q.ship>0});
   for(const j of S.found){ const d=DEPT[j]; if(OBJAT.has(d.i)) continue; const ex=ORDER.find(id=>B[id].deposit===d.k);
     add(d.i,{s:'ore_'+d.k,g:d.g,tip:`Open site: ${DEPOSITS[d.k]}|${REG[d.rid].name}|${ENERGY_SITES.includes(d.k)?'':gradeWord(j)+'|'}Build a ${B[ex].name} here${B[ex].tech&&!T(B[ex].tech)?` (needs ${TECHS[B[ex].tech].name})`:''}`}); }
   const sv=survey();
@@ -2250,6 +2453,7 @@ function drawEarth(g,now,k){
     const img=SPR[o.s]; if(!img) continue;
     if(!o.s.startsWith('ore_')){ g.fillStyle='rgba(0,0,0,.22)'; g.beginPath(); g.ellipse(X+32,Y+57,Math.min(30,(img.width<=16?48:img.width)/2),6,0,0,7); g.fill(); }
     drawSprite(g,img,X+32,o.s.startsWith('ore_')?Y+54:Y+60,o.dim?.45:null);
+    if(o.eq&&o.eq.length) o.eq.forEach((t,n)=>{ const im=SPR['eq_'+t]; if(im) g.drawImage(im,X-10+n*22,Y+34,32,32); });
     if(o.g&&o.g!=='std'){ const n=o.g==='rich'?3:1, col=o.g==='rich'?'#ffd65a':'#9aa0a8'; g.fillStyle='rgba(0,0,0,.45)'; g.fillRect(X+31-n*5,Y+3,n*10+2,9); g.fillStyle=col;
       for(let q=0;q<n;q++){ const sx=X+33-n*5+q*10; if(o.g==='rich') g.fillRect(sx+2,Y+4,2,7); g.fillRect(sx,Y+6,6,3); } } }
   if(ui.path.length){ g.fillStyle='rgba(255,226,122,.95)'; for(const i of ui.path){ const {x,y}=TL[i]; g.fillRect(x*TS+30,y*TS+30,5,5); }
@@ -2379,11 +2583,13 @@ function inspectAt(sx,sy){ // long-press: show what is under the finger without 
   else { ui.tip=null; if(id==='earth') return; ui.sel=id; }
   ui.card=true; ui.fly=null; render();
 }
+function openAtTile(i){ const a=S.at&&S.at[i]; if(a&&FACS[a.id]){ openMod('fac',i); return true; } if(a&&a.id==='barracks'){ openMod('ch',i); return true; }
+  const q=S.queue.find(q=>q.kind==='build'&&q.tile===i); if(q){ openMod('proj',q.uid); return true; } return false; }
 function mapClick(sx,sy){
   const v=ui.view, [wx,wy]=toWorld(v,sx,sy), id=hitTest(v,wx,wy); if(id==null) return;
   if(v==='earth'){ const rid=TL[id].rid; ui.sel=rid;
     if(ui.fly){ ui.fly=null; }
-    else if(ui.placing) placeAt(id); else if(ui.tapMode==='drive'){ ui.card=false; ui.tip=null; driveTo(id); } else { ui.card=true; ui.tip=tipAt(v,wx,wy); } }
+    else if(ui.placing) placeAt(id); else if(ui.tapMode==='drive'){ ui.card=false; ui.tip=null; driveTo(id); } else if(!openAtTile(id)){ ui.card=true; ui.tip=tipAt(v,wx,wy); } }
   else if(id==='earth'){ ui.view='earth'; }
   else { ui.sel=id; ui.tip=null; if(ui.placing&&REG[id]) placeIn(id); else ui.card=true; }
   save(); render();
@@ -2463,7 +2669,7 @@ function detail(){
     if(st==='open') left+=`<div class="costs">${costChips(R.cost)}</div><div class="card-f" style="margin-top:10px"><span class="time">${R.time} months, 1 crew</span><span class="grow"></span><button class="btn" data-act="survey" data-id="${rid}" ${afford(R.cost)?'':'disabled'}>Send survey</button></div>`;
     else if(st==='locked') left+=`<p class="why">Needs ${TECHS[R.tech].name}.</p>`;
     else { const q=S.queue.find(q=>q.kind==='exp'&&q.id===rid); const i=S.queue.indexOf(q);
-      left+=`<p class="state">${i<crews()?`Mission underway, ${fmtLeft(q.left)} to go.`:'Waiting for a free crew on the work schedule.'}</p>`; }
+      left+=`<p class="state">${q.w>0?`Mission underway, ${jobLeft(q)}.`:'Waiting for builders on the work schedule.'}</p>`; }
     return `<div class="rp">${left}</div><div></div></div>`;
   }
   left+=`<div class="sub">Deposits &amp; land</div><div class="blk">${depRows(rid)}
@@ -2473,7 +2679,8 @@ function detail(){
     const warn=b.on&&ef&&ef.e<0.999&&(d.workers||d.power||d.in)?`<p class="why">Running at ${Math.round(ef.e*100)}%${ef.why?`, short on ${ef.why}`:''}.</p>`:'';
     const tog=(d.workers||d.power)?`<div class="stepper"><button data-act="on" data-rid="${rid}" data-id="${id}" data-d="-1" ${b.on<=0?'disabled':''} aria-label="Switch one off">−</button><span>${b.on}/${b.n} on</span><button data-act="on" data-rid="${rid}" data-id="${id}" data-d="1" ${b.on>=b.n?'disabled':''} aria-label="Switch one on">+</button></div>`:`<span class="count">×${b.n}</span>`;
     const gx=GM[rid+':'+id]||1, gt=Math.abs(gx-1)>.005?`<small class="${gx>1?'pos':'neg'}">${gx>1?'+':''}${Math.round((gx-1)*100)}% grade</small>`:'';
-    return `<div class="hb"><span class="nm">${icon(id)}${d.name}${x>1?`<small class="pos">+${Math.round((x-1)*100)}%</small>`:''}${gt}</span>${tog}${warn}</div>`; }).join('');
+    const mk=(FACS[id]||id==='barracks')&&Object.keys(S.at||{}).find(k=>S.at[k].rid===rid&&S.at[k].id===id), mg=mk?`<button class="ghost sm" data-act="${FACS[id]?'fac':'ch'}" data-k="${mk}">Manage</button>`:'';
+    return `<div class="hb"><span class="nm">${icon(id)}${d.name}${x>1?`<small class="pos">+${Math.round((x-1)*100)}%</small>`:''}${gt}</span>${mg}${tog}${warn}</div>`; }).join('');
   const qd=S.queue.filter(q=>q.kind==='build'&&q.rid===rid).map(q=>`<div class="hb"><span class="nm">${icon('scaffold')}${B[q.id].name}<small>building</small></span><span class="time">${fmtLeft(q.left)}</span></div>`).join('');
   left+=`<div class="sub">Buildings here</div><div>${here+qd||'<p class="desc">Nothing built here yet.</p>'}</div></div>`;
   const opts=ORDER.filter(id=>{ const d=B[id]; if(d.tech&&!T(d.tech)) return false; if(d.max&&nOf(id)&&!nAt(rid,id)) return false;
@@ -2505,6 +2712,7 @@ function unlocksOf(id){
   const u=[];
   ORDER.filter(b=>B[b].tech===id).forEach(b=>u.push(`${icon(b)}<span>${B[b].name}</span>`));
   Object.entries(CARS).filter(([,c])=>c.tech===id).forEach(([k,c])=>u.push(`${icon('car_'+k)}<span>${c.name}</span>`));
+  Object.entries(EQ).filter(([,e])=>e.tech===id).forEach(([k,e])=>u.push(`${icon('eq_'+k)}<span>${e.name} (equipment)</span>`));
   SPACE.filter(r=>REG[r].tech===id).forEach(r=>u.push(`${icon('logo')}<span>Survey ${REG[r].name}</span>`));
   if(id==='rocketry') u.push(`${icon('launchpad')}<span>Rockets</span>`);
   if(id==='starship') u.push(`${icon('shipyard')}<span>Starship modules</span>`);
@@ -2782,22 +2990,93 @@ function tabChain(){
     ${head}${quick}${pick}${sum}<div class="ch-card"><div class="ch-tree">${tree}</div></div>${legend}`;
 }
 /* ---------- Queue & log ---------- */
+function qName(q){ return q.kind==='build'?`${B[q.id].name} <span style="color:var(--faint);font-weight:400">· ${REG[q.rid].name}</span>`:q.kind==='exp'?REG[q.id].name:q.kind==='rocket'?'Rocket':q.kind==='project'?BREAKS[q.id].name:MODS[q.id].name; }
 function renderQueue(id,pop){
-  const c=crews();
   const lab={build:'BUILD',exp:'SURVEY',rocket:'ROCKET',module:'SHIPYARD',project:'PROJECT'};
-  const name=q=>q.kind==='build'?`${B[q.id].name} <span style="color:var(--faint);font-weight:400">· ${REG[q.rid].name}</span>`:q.kind==='exp'?REG[q.id].name:q.kind==='rocket'?'Rocket':q.kind==='project'?BREAKS[q.id].name:MODS[q.id].name;
   const ico={build:q=>q.id,exp:()=>'logo',rocket:()=>'launchpad',module:()=>'shipyard',project:()=>'logo'};
-  const items=S.queue.map((q,i)=>{ const on=i<c, p=(1-q.left/q.total)*100, wr=workRate(q);
-    const wt=Math.abs(wr-1)>.01?`<span class="wx ${wr<1?'slow':'fast'}" title="${season().name}: this job runs at ${Math.round(wr*100)}% speed">${season().ic} ${Math.round(wr*100)}%</span>`:'';
-    return `<li class="q ${on?'':'wait'}"><div class="q-top">${icon(ico[q.kind](q))}<span class="kind">${lab[q.kind]}</span><span class="q-name">${name(q)}${wt}</span><span class="q-left">${on?fmtLeft(q.left/wr):'waiting'}</span></div>
+  const items=S.queue.map((q,i)=>{ const ship=q.ship>0, on=ship||q.w>0, r=jobRate(q), wr=workRate(q);
+    const p=ship?(1-q.ship/(q.ship0||q.ship))*100:(1-q.left/q.total)*100;
+    const wt=Math.abs(wr-1)>.01&&!ship?`<span class="wx ${wr<1?'slow':'fast'}" title="${season().name}: ${Math.round(wr*100)}% speed">${season().ic} ${Math.round(wr*100)}%</span>`:'';
+    const nU=unitsOn(q), work=nU.filter(u=>u.st==='work').length, mov=nU.length-work;
+    const meta=ship?`🚂 Materials in transit · ${q.ship} d`:`👷 ${q.w||0}/${stdCrew(q)} builders${onEarth(q)?` · ⚙ ${work} machine${work===1?'':'s'}${mov?` (+${mov} en route)`:''}`:''}${r>0?` · <b>${r.toFixed(2)}×</b> speed`:''}${q.manual?' · manual':''}`;
+    return `<li class="q ${on?'':'wait'} ${ship?'ship':''}"><div class="q-top">${icon(ico[q.kind](q))}<span class="kind">${ship?'SHIPPING':lab[q.kind]}</span><button class="q-name lnk" data-act="proj" data-uid="${q.uid}" title="Open project">${qName(q)}${wt}</button><span class="q-left">${ship?`${q.ship} d`:r>0?fmtLeft(q.left/r):'waiting'}</span></div>
+    <div class="q-meta">${meta}</div>
     <div class="q-bot"><div class="prog"><i style="width:${p.toFixed(1)}%"></i></div>
     <button class="ic" data-act="up" data-uid="${q.uid}" ${i===0?'disabled':''} aria-label="Move up">▲</button>
     <button class="ic" data-act="down" data-uid="${q.uid}" ${i===S.queue.length-1?'disabled':''} aria-label="Move down">▼</button>
     <button class="ic" data-act="cancel" data-uid="${q.uid}" aria-label="Cancel" title="${q.left>=q.total-1e-9?'Full refund':'Half refund'}">✕</button></div></li>`; }).join('');
-  put(id,`<div class="ph"><h2>Work schedule</h2><span class="crews">${Math.min(c,S.queue.length)}/${c} crews busy</span>${pop?'<button class="ic" data-act="sched" aria-label="Close" style="width:28px;height:26px">✕</button>':''}</div>
+  const pct=Math.round((S.bpct==null?.35:S.bpct)*100);
+  put(id,`<div class="ph"><h2>Work schedule</h2><span class="crews">${S.bw||0}/${builderPool()} builders</span>${pop?'<button class="ic" data-act="sched" aria-label="Close" style="width:28px;height:26px">✕</button>':''}</div>
+  <div class="bline"><span>Builders: <b>${pct}%</b> of residents</span><div class="stepper sm"><button data-act="bpct" data-d="-1" ${pct<=10?'disabled':''} aria-label="Fewer builders">−</button><button data-act="bpct" data-d="1" ${pct>=80?'disabled':''} aria-label="More builders">+</button></div><span class="grow"></span><button class="ghost sm" data-act="fleet">Equipment · ${fleetCount()}</button></div>
   ${seasonHTML()}${contractsHTML()}
-  ${items?`<ol>${items}</ol>`:'<p class="empty">No projects scheduled. Idle crews are wasted months.</p>'}`);
+  ${items?`<ol>${items}</ol>`:'<p class="empty">No projects scheduled. Idle builders are wasted months.</p>'}`);
 }
+/* ---------- Construction screens: project, factory, crew house, equipment ---------- */
+const findQ=uid=>S.queue.find(q=>q.uid===uid);
+const unitWhere=u=>u.st==='move'?`${u.eta} d away`:u.st==='work'?(fuelOK(u.t)<.99?'short of '+RES[EQ[u.t].fuel].toLowerCase():'working'):`idle in ${REG[u.rid]?REG[u.rid].name:'?'}`;
+const mx=(lbl,x,tip)=>`<span class="mx ${x<.995?'neg':x>1.005?'pos':''}" title="${tip}">${lbl} <b>×${x.toFixed(2)}</b></span>`;
+function projHTML(q){
+  const build=q.kind==='build', earth=onEarth(q), std=stdCrew(q), r=jobRate(q), l=laborX(q);
+  const cls=build?CCLASS[classOf(q.id)]:null, ch=earth?crewHouses(q):null;
+  const phase=q.ship>0?`<span class="ph-tag ship">🚂 Materials in transit · arrive in ${q.ship} d</span>`:q.w>0?`<span class="ph-tag on">🔨 Building · ${fmtLeft(q.left/Math.max(r,1e-6))} left</span>`:'<span class="ph-tag wait">Waiting for builders</span>';
+  const pr=(1-q.left/q.total)*100;
+  let h=`<div class="eyebrow">${cls?cls.name+' · ':''}${build?REG[q.rid].name:'Project'}</div><h3>${qName(q).replace(/<[^>]+>/g,'').replace(/ · .*/,'')}</h3>
+    <div class="pj-top">${phase}<div class="prog"><i style="width:${pr.toFixed(1)}%"></i></div></div>
+    <div class="mxs">${mx('👷 Builders',l||0,'Builders on the job compared with a full crew')}${earth?mx('⚙ Equipment',eqX(q),'Machines on site. Missing required machines halve the speed')+mx('🏠 Crew houses',houseX(q),'Specialist crew houses within 5 tiles'):''}${build?mx(season().ic+' '+season().name,workRate(q),season().note):''}<span class="mx tot">Speed <b>${r.toFixed(2)}×</b></span></div>`;
+  h+=`<div class="pj-grid"><section><div class="sub">Builders</div>
+    <div class="pj-row"><span><b>${q.w||0}</b> of ${std} for a full crew${q.wpin!=null?' · <i>set by you</i>':''}</span><div class="stepper"><button data-act="pw" data-d="-1" aria-label="Fewer builders">−</button><span>${q.wpin!=null?q.wpin:q.w||0}</span><button data-act="pw" data-d="1" aria-label="More builders">+</button></div>${q.wpin!=null?'<button class="ghost sm" data-act="pwauto">Auto</button>':''}</div>
+    <p class="note">Builders come from your residents: ${S.bw||0} of ${builderPool()} are working. Up to ${std*2} on this job adds speed, but every builder is one less factory worker.</p>`;
+  if(earth){ const need=ch.need, eff=ch.m+0.4*ch.o;
+    h+=`<div class="sub">Crew houses</div><div class="pj-row"><span><b>${ch.m}</b> ${CCLASS[ch.cls].name} crew house${ch.m===1?'':'s'} within ${CH_R} tiles${ch.o?` · ${ch.o} other`:''} · this job needs ${need}</span><span class="${eff>=need?'pos':''}">+${Math.round(50*Math.min(1,eff/need))}%</span></div>
+      ${eff<need?`<p class="note">Build a Crew House within ${CH_R} tiles and set its specialty to ${CCLASS[ch.cls].name} for up to +50%. Other specialties count for less.</p>`:''}`; }
+  if(build){ const mats=Object.entries(q.paid||{}).filter(([k])=>k!=='money');
+    h+=`<div class="sub">Materials</div><div class="mats">${mats.map(([k,v])=>`<span class="chip ${q.ship>0?'':'ok'}">${fmt(v)} ${RES[k]}</span>`).join('')||'<span class="note">None</span>'}</div>
+      <p class="note">${q.ship>0?`Shipping from Mill Valley: ${q.ship} of ${q.ship0||q.ship} days left. Railways and trucks ship faster; winter is slower.`:'All materials are on site.'}</p>`; }
+  h+='</section>';
+  if(earth){ const R=eqRoles(q);
+    h+=`<section><div class="sub">Equipment <span class="grow"></span></div>${Object.entries(R).map(([role,sl])=>{
+      const best=bestUnit(role,q,1e9), eta=best?travelDays(best.rid,q.rid,true):0;
+      const units=sl.units.map(u=>`<span class="unit">${icon('eq_'+u.t)}<span><b>${EQ[u.t].name}</b><small>${unitWhere(u)}</small></span><button class="ic" data-act="prem" data-u="${u.uid}" aria-label="Send back">✕</button></span>`).join('');
+      return `<div class="role"><div class="role-h"><b>${ROLES[role]}</b><span class="tag ${sl.req?'req':''}">${sl.req?'Required':'Bonus'}</span><span class="grow"></span><span class="${roleX(sl)<1?'neg':roleX(sl)>1?'pos':''}">×${roleX(sl).toFixed(2)}</span></div>
+        ${units||`<p class="note">${sl.req?'Nothing assigned: working by hand at half speed.':'Nothing assigned.'}</p>`}
+        <div class="role-a">${sl.units.length<sl.n+1?`<button class="ghost sm" data-act="padd" data-r="${role}" ${best?'':'disabled'}>${best?`+ ${EQ[best.t].name} (${eta?eta+' d':'here'})`:'No idle machine'}</button>`:''}<button class="ghost sm" data-act="porder" data-r="${role}">Order one</button></div></div>`; }).join('')}
+      <p class="note">${q.manual?'Manual: the foreman leaves this site alone.':'Auto: the foreman sends the best idle machines that arrive in time.'}</p></section>`; }
+  h+=`</div><div class="acts">${earth?`<button class="ghost" data-act="pman">${q.manual?'Hand back to foreman':'Manage by hand'}</button>`:''}<span class="grow"></span><button class="btn" data-act="close">Done</button></div>`;
+  return h; }
+function facHTML(k){ const a=S.at[k]; if(!a||!FACS[a.id]) return null; const st=facState(k), fd=FACS[a.id], b=S.bld[a.rid][a.id], e=F&&F.eff[a.rid+':'+a.id]?F.eff[a.rid+':'+a.id].e:1;
+  const cur=st.cur?`<div class="pj-row">${icon('eq_'+st.cur.t)}<span><b>${EQ[st.cur.t].name}</b> · ${fmtLeft(st.cur.left/Math.max(fd.speed*e,1e-6))} left</span></div><div class="prog"><i style="width:${(100*(1-st.cur.left/st.cur.total)).toFixed(0)}%"></i></div>`
+    :`<p class="note">${st.orders.length?`Waiting for materials for a ${EQ[st.orders[0]].name}.`:st.auto?'Idle: no shortage on scheduled jobs right now.':'Idle. Add an order below.'}</p>`;
+  const sh=eqShort(), short=Object.keys(sh).map(r=>ROLES[r].toLowerCase()).join(', ');
+  const types=Object.keys(EQ).map(t=>{ const E=EQ[t], ok=eqOK(t,fd.tier), lock=E.tier>fd.tier?'Needs an Equipment Factory':E.tech&&!T(E.tech)?`Needs ${TECHS[E.tech].name}`:'';
+    const n=(S.fleet||[]).filter(u=>u.t===t).length;
+    return `<div class="eqt ${ok?'':'lock'}">${icon('eq_'+t)}<div class="eqt-b"><b>${E.name}</b><small>${E.role==='any'?'Any role':ROLES[E.role]} · power ${E.p} · ${E.fuel?'burns '+RES[E.fuel].toLowerCase():'no fuel'}${n?` · you have ${n}`:''}</small>${ok?`<div class="costs">${costChips(E.cost)}</div>`:`<small class="why">${lock}</small>`}</div>${ok?`<button class="ghost sm" data-act="facadd" data-t="${t}">Order</button>`:''}</div>`; }).join('');
+  return `<div class="eyebrow">${REG[a.rid].name} · ${b.on?`running at ${Math.round(e*100)}%`:'switched off'}</div><h3>${B[a.id].name}</h3>
+    <div class="pj-row"><span>Auto-build what scheduled jobs are short of${short?`: <b>${short}</b>`:''}</span><button class="${st.auto?'btn':'ghost'} sm" data-act="facauto">${st.auto?'Auto on':'Auto off'}</button></div>
+    <div class="sub">Now building</div>${cur}
+    <div class="sub">Orders</div>${st.orders.length?`<ol class="orders">${st.orders.map((t,i)=>`<li>${icon('eq_'+t)}<span>${EQ[t].name}</span><span class="grow"></span><button class="ic" data-act="facdel" data-i="${i}" aria-label="Remove">✕</button></li>`).join('')}</ol>`:'<p class="note">No orders. Your orders go before auto-builds.</p>'}
+    <div class="sub">Equipment it can build</div><div class="eqlist">${types}</div>
+    <div class="acts"><span class="grow"></span><button class="btn" data-act="close">Done</button></div>`; }
+function chHTML(k){ const a=S.at[k]; if(!a||a.id!=='barracks') return null; const t=TL[k], sp=a.spec||'light';
+  const near=S.queue.filter(q=>onEarth(q)&&q.tile!=null&&Math.max(Math.abs(TL[q.tile].x-t.x),Math.abs(TL[q.tile].y-t.y))<=CH_R);
+  return `<div class="eyebrow">${REG[a.rid].name}</div><h3>Crew House</h3><p class="note">Its crew specialises in one kind of construction. Jobs of that kind within ${CH_R} tiles get up to +50% speed; other jobs nearby get a smaller boost. Big projects need several crew houses for the full bonus.</p>
+    <div class="sub">Specialty</div><div class="specs">${Object.entries(CCLASS).map(([c,C])=>`<button data-act="chspec" data-c="${c}" aria-pressed="${sp===c}"><b>${C.name}</b><small>${ORDER.filter(id=>classOf(id)===c).slice(0,3).map(id=>B[id].name).join(', ')}…</small></button>`).join('')}</div>
+    <div class="sub">Jobs in reach</div>${near.length?near.map(q=>`<div class="pj-row"><button class="lnk" data-act="proj" data-uid="${q.uid}">${B[q.id].name}</button><span class="${classOf(q.id)===sp?'pos':''}">${CCLASS[classOf(q.id)].name}</span></div>`).join(''):'<p class="note">No scheduled jobs within reach.</p>'}
+    <div class="acts"><span class="grow"></span><button class="btn" data-act="close">Done</button></div>`; }
+function fleetHTML(){ const by={}; for(const u of S.fleet||[]) (by[u.t]=by[u.t]||[]).push(u);
+  const rows=Object.keys(EQ).filter(t=>by[t]).map(t=>{ const L=by[t], c=st=>L.filter(u=>u.st===st).length;
+    return `<div class="eqt">${icon('eq_'+t)}<div class="eqt-b"><b>${EQ[t].name} × ${L.length}</b><small>${c('work')} working · ${c('move')} on the road · ${c('idle')} idle</small><small>${L.map(u=>unitWhere(u)).join(' · ')}</small></div></div>`; }).join('');
+  const facs=facTiles().map(k=>{ const a=S.at[k], st=facState(k); return `<div class="pj-row"><button class="lnk" data-act="fac" data-k="${k}">${B[a.id].name} · ${REG[a.rid].name}</button><span>${st.cur?`building ${EQ[st.cur.t].name}`:'idle'}${st.orders.length?` · ${st.orders.length} ordered`:''}</span></div>`; }).join('');
+  const sh=eqShort();
+  return `<div class="eyebrow">Construction equipment</div><h3>Equipment</h3>
+    ${Object.keys(sh).length?`<p class="note">Scheduled jobs are short of: <b>${Object.keys(sh).map(r=>ROLES[r].toLowerCase()).join(', ')}</b>.</p>`:''}
+    <div class="sub">Factories</div>${facs||'<p class="note">No equipment factories yet. Build a Machine Works (Industry).</p>'}
+    <div class="sub">Fleet</div><div class="eqlist">${rows||'<p class="note">No machines yet.</p>'}</div>
+    <div class="acts"><span class="grow"></span><button class="btn" data-act="close">Done</button></div>`; }
+function modHTML(){ const m=ui.mod; if(!m) return null;
+  if(m.k==='proj'){ const q=findQ(m.id); return q?projHTML(q):null; }
+  if(m.k==='fac') return facHTML(m.id); if(m.k==='ch') return chHTML(m.id); if(m.k==='fleet') return fleetHTML(); return null; }
+function openMod(k,id){ ui.mod={k,id}; const h=modHTML(); if(!h){ ui.mod=null; return; } showModal(h,'wide pj'); const d=modal.querySelector('.dlg'); if(d){ d.scrollTop=0; d.focus&&d.setAttribute('tabindex','-1'); d.focus({preventScroll:true}); } }
+function refreshMod(){ if(!ui.mod||modal.hidden) return; const h=modHTML(); if(!h){ ui.mod=null; hideModal(); return; } const d=modal.querySelector('.dlg'); if(d) d.innerHTML=h; }
 function renderLog(){
   put('log',`<div class="ph"><h2>Dispatches</h2></div><ol>${S.log.slice(0,40).map(l=>`<li class="${l.big?'big':''}"><time>${dateStr(l.m)}</time><span>${l.t}</span></li>`).join('')}</ol>`);
 }
@@ -2825,7 +3104,7 @@ function frame(now){
 }
 async function start(data){
   makeSprites(); makeSpaceSprites(); makeFogTiles();
-  await loadArt(); SOLARC=paintSolar(); STARSC=paintStars();
+  makeEqSprites(); await loadArt(); makeFactorySprites(); SOLARC=paintSolar(); STARSC=paintStars();
   S=migrate((data&&data.state)||load())||newGame();
   if(OLDSAVE) S.log.unshift({m:0,t:'A new, much larger world. Saves from the old map were set aside and could not be carried over.',big:true});
   for(const k in RES) if(k!=='rocket'&&S.res[k]==null) S.res[k]=0;
