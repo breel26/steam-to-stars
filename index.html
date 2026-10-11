@@ -147,6 +147,21 @@ h2{font:700 12px/1 var(--pixel);letter-spacing:.04em;text-transform:uppercase;co
 .ic:disabled{opacity:.3;cursor:default}
 .empty{color:var(--faint);font-size:13px;padding:0 14px 14px;margin:0}
 .crews{font:12px var(--mono);color:var(--muted)}
+.season-box{display:flex;gap:10px;align-items:flex-start;margin:0 10px 8px;padding:8px 10px;border-radius:8px;background:rgba(255,255,255,.04);font-size:12.5px;line-height:1.4;color:var(--muted)}
+.season-box b{color:var(--text)} .season-box .s-ic{font-size:20px;line-height:1}
+.season-box .s-next{margin-top:3px;color:var(--faint)}
+.contracts{margin:0 10px 8px;display:grid;gap:6px}
+.ct{border:1px solid var(--line);border-left:3px solid var(--good);border-radius:6px;padding:8px 10px;background:var(--panel2);display:grid;gap:6px}
+.ct.risk{border-left-color:var(--bad)}
+.ct .kind{color:var(--good)} .ct.risk .kind{color:var(--bad)}
+.ct-note{margin:0;font-size:12px;color:var(--muted)}
+.btn.sm{padding:3px 10px;font-size:12px}
+#scr-colony .btn.sm{padding:4px 12px;font-size:12px}
+.btn:disabled{opacity:.45;cursor:default;box-shadow:none}
+.wx{margin-left:6px;font:600 11px var(--mono);padding:1px 6px;border-radius:99px;white-space:nowrap}
+.wx.slow{color:#9fd6ff;background:rgba(120,190,255,.12)} .wx.fast{color:#ffd65a;background:rgba(255,214,90,.12)}
+.bn-date .season{font:600 11px/1 var(--body);border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:var(--text);border-radius:99px;padding:3px 8px;cursor:pointer;align-self:center}
+.bn-date .season.s-winter{color:#bfe4ff}.bn-date .season.s-summer{color:#ffd65a}.bn-date .season.s-spring{color:#b6f0a8}.bn-date .season.s-autumn{color:#f0b070}
 .log ol{list-style:none;margin:0;padding:0 14px 12px;display:grid;gap:5px;max-height:320px;overflow-y:auto}
 .log li{font-size:13px;color:var(--muted);display:grid;grid-template-columns:62px 1fr;gap:6px}
 .log li time{font:11px/1.8 var(--mono);color:var(--faint)}
@@ -885,7 +900,66 @@ function checkBreaks(){ if(!S.breaks) S.breaks={}; for(const [id,b] of Object.en
       <div class="acts"><button class="ghost" data-act="close">Later</button><button class="btn" data-act="project" data-id="${id}" ${afford(b.cost)?'':'disabled'}>${afford(b.cost)?'Schedule it':'Not enough resources yet'}</button></div>`);
     return; } }
 function breakFx(b){ const l=Object.entries(b.fx||{}).map(([k,v])=>fxText(k,v)); if(b.remote) l.push('No surcharge for building in remote regions'); return l.join(' · '); }
-/* Regions: every place on the map. dep = deposit sites, plots = room for non-mining buildings. */
+/* ============ SEASONS ============ */
+const SEASONS=[
+  {id:'winter',name:'Winter',ic:'❄',build:{woods:.5,hills:.5,arctic:.5,plains:.8,delta:.8,canyon:.8},note:'Snow: building is half speed in forests, hills and ice, 80% on farmland, wetlands and canyons. Hill passes are closed to ground vehicles.'},
+  {id:'spring',name:'Spring',ic:'❀',build:{delta:.6},note:'Spring floods: building in river wetlands runs at 60%.'},
+  {id:'summer',name:'Summer',ic:'☀',build:{plains:1.2,woods:1.2,hills:1.2,delta:1.2,canyon:1.2,arctic:1.2,desert:.7,highlands:.6},note:'Long days: building +20% almost everywhere. Desert heat (70%) and the rainforest monsoon (60%) slow work there.'},
+  {id:'autumn',name:'Autumn',ic:'❦',build:{},note:'Fair weather: building runs at normal speed everywhere.'}
+];
+const seasonOf=m=>SEASONS[[0,0,1,1,1,2,2,2,3,3,3,0][((m%12)+12)%12]];
+const season=()=>seasonOf(S.month);
+const isWinter=()=>season().id==='winter';
+function workRate(q,m){ // how fast a scheduled job progresses this month
+  if(q.kind!=='build'||!REG[q.rid]||REG[q.rid].where!=='earth') return 1;
+  const r=seasonOf(m==null?S.month:m).build[bkOf(q.rid)]; return r==null?1:r; }
+function nextSeason(){ const cur=season(); for(let k=1;k<=3;k++){ const z=seasonOf(S.month+k); if(z!==cur) return {z,in:k-(S.day||0)/daysIn(S.month)}; } return null; }
+
+/* ============ CONTRACTS: delivery orders with a deadline ============ */
+const CLIENTS=[['the Navy','for new warships'],['the National Railway','for a new trunk line'],['the City Council','for public works'],['a harbor syndicate','for new docks'],
+  ['overseas buyers','for export'],['the War Office','for stockpiles'],['an electric company','for a new plant'],['a motor works','for its assembly line'],['the Geological Survey','for field stations'],['a university','for its laboratories']];
+const RVAL=[3,8,20,50,120,300];
+function resEra(k){ let e=9; for(const id of ORDER){ const d=B[id]; if(!d.out||d.out[k]==null) continue; e=Math.min(e,d.tech?TECHS[d.tech].era:0); } return e===9?0:Math.min(5,e); }
+const niceN=n=>{ const m=n<50?5:n<200?10:n<1000?50:n<5000?100:500; return Math.max(m,Math.round(n/m)*m); };
+function makeContract(){
+  F=flows(); const net=k=>(F.st[k]||0)-(S.res[k]||0);
+  const cand=Object.keys(RES).filter(k=>!['money','rp','rocket'].includes(k)&&net(k)>0.4);
+  if(!cand.length) return null;
+  const k=cand[Math.floor(Math.random()*cand.length)], months=6+Math.floor(Math.random()*7);
+  const need=niceN(net(k)*months*(0.75+Math.random()*0.35)+(S.res[k]||0)*0.3);
+  const v=RVAL[resEra(k)], inc=Math.max(10,net('money')), money=niceN((inc*months*0.5+need*v*0.25)*(0.9+Math.random()*0.3)), rp=niceN(need*v*0.06+10*(S.era+1));
+  const [who,why]=CLIENTS[Math.floor(Math.random()*CLIENTS.length)];
+  return {uid:S.uid++, k, need, who, why, months, due:null, money, rp, fine:niceN(money*0.25)}; }
+function contractTick(){ // once a month
+  if(!S.con) S.con={offer:null,active:[],next:8,done:0,failed:0};
+  const C=S.con;
+  for(const c of [...C.active]){ if(S.month<c.due) continue;
+    if((S.res[c.k]||0)>=c.need) deliver(c.uid,true);
+    else { C.active.splice(C.active.indexOf(c),1); C.failed++; S.res.money=Math.max(0,(S.res.money||0)-c.fine);
+      log(`Contract missed: ${c.who} wanted ${fmt(c.need)} ${RES[c.k].toLowerCase()}. Paid a $${fmt(c.fine)} penalty.`,true); } }
+  if(S.month<C.next||C.active.length>=2||!modal.hidden) return;
+  const c=makeContract(); C.next=S.month+(c?7+Math.floor(Math.random()*6):2); if(!c) return;
+  C.offer=c; showOffer(); }
+function showOffer(){ const c=S.con&&S.con.offer; if(!c) return;
+  showModal(`<div class="eyebrow">Contract offer</div><h3>${fmt(c.need)} ${RES[c.k]}</h3>
+    <p>${c.who[0].toUpperCase()+c.who.slice(1)} wants <b style="color:var(--text)">${fmt(c.need)} ${RES[c.k].toLowerCase()}</b> ${c.why}, delivered by <b style="color:var(--text)">${dateStr(S.month+c.months)}</b> (${c.months} months).</p>
+    <p>You have ${fmt(S.res[c.k]||0)} and make about ${fmtRate((F.st[c.k]||0)-(S.res[c.k]||0))} a month.</p>
+    <p><b style="color:var(--good)">Reward: $${fmt(c.money)} and ${fmt(c.rp)} research</b><br><span class="neg">Miss the deadline: $${fmt(c.fine)} penalty</span></p>
+    <div class="acts"><button class="ghost" data-act="contract" data-v="no">Decline</button><button class="btn" data-act="contract" data-v="yes">Accept</button></div>`); }
+function deliver(uid,auto){ const C=S.con; const c=C&&C.active.find(x=>x.uid===uid); if(!c||(S.res[c.k]||0)<c.need) return;
+  S.res[c.k]-=c.need; S.res.money=(S.res.money||0)+c.money; S.res.rp=(S.res.rp||0)+c.rp; C.active.splice(C.active.indexOf(c),1); C.done++;
+  log(`Contract ${auto?'delivered on the deadline':'delivered'}: ${fmt(c.need)} ${RES[c.k].toLowerCase()} to ${c.who}. +$${fmt(c.money)}, +${fmt(c.rp)} research.`,true); }
+function contractsHTML(){ const C=S.con; if(!C||!C.active.length) return '';
+  return `<div class="contracts"><div class="sub" style="margin:0 0 6px">Contracts</div>${C.active.map(c=>{ const have=S.res[c.k]||0, p=Math.min(100,have/c.need*100), left=c.due-S.month-(S.day||0)/daysIn(S.month), ok=have>=c.need;
+    const pace=(F.st[c.k]||0)-(S.res[c.k]||0), short=!ok&&have+Math.max(0,pace)*left<c.need;
+    return `<div class="ct ${short?'risk':''}"><div class="q-top">${icon(ORDER.find(id=>B[id].out&&B[id].out[c.k])||'logo')}<span class="kind">CONTRACT</span><span class="q-name">${fmt(c.need)} ${RES[c.k]}</span><span class="q-left ${left<2&&!ok?'neg':''}">due ${dateStr(c.due)}</span></div>
+      <div class="q-bot"><div class="prog"><i style="width:${p.toFixed(1)}%"></i></div><span class="q-left">${fmt(have)}/${fmt(c.need)}</span>
+      <button class="btn sm" data-act="deliver" data-uid="${c.uid}" ${ok?'':'disabled'}>Deliver</button></div>
+      <p class="ct-note">For ${c.who}. ${ok?`Ready. +$${fmt(c.money)}, +${fmt(c.rp)} research. Delivers itself on the deadline if you don't.`:short?`Behind pace. Missing it costs $${fmt(c.fine)}.`:`On pace. +$${fmt(c.money)}, +${fmt(c.rp)} research.`}</p></div>`; }).join('')}</div>`; }
+function seasonHTML(){ const z=season(), n=nextSeason();
+  return `<div class="season-box"><span class="s-ic">${z.ic}</span><div><b>${z.name}</b> <span>${z.note}</span>${n?`<div class="s-next">${n.z.ic} ${n.z.name} in ${fmtLeft(n.in)}${n.z.id==='winter'?'. Get outdoor work in the north done first.':''}</div>`:''}</div></div>`; }
+
+
 const REG = {
   leo:{name:'Low Earth Orbit',biome:'Orbit, 400 km',where:'space',tech:'rocketry',cost:{rocket:1},time:3,dep:{},plots:1,reward:{rp:400},
     trait:'The Orbital Shipyard can only be built here.',text:'First orbit. The data alone is worth a fortune in research.'},
@@ -1477,13 +1551,14 @@ function tick(){ // one day
   const dim=daysIn(S.month), fr=1/dim;
   S.res=flows(fr).st;
   const c=crews(); const done=[];
-  S.queue.slice(0,c).forEach(q=>{ q.left-=fr; if(q.left<=1e-6) done.push(q); });
+  S.queue.slice(0,c).forEach(q=>{ q.left-=fr*workRate(q); if(q.left<=1e-6) done.push(q); });
   for(const q of done){ S.queue.splice(S.queue.indexOf(q),1); complete(q); }
   for(const v of [...S.voyages]){ v.left-=fr; if(v.left<=1e-6){ S.voyages.splice(S.voyages.indexOf(v),1); arrive(v); } }
   for(const k in S.res) if(S.res[k]>0) S.seen[k]=true;
   S.day=(S.day||0)+1;
   if(S.day>=dim){ // end of month
-    S.day=0; S.month++; checkBreaks();
+    S.day=0; S.month++; checkBreaks(); contractTick();
+    if(S.month%12===11) log('Winter sets in. Snow closes the hill passes and slows building in the north.');
     const h=housing(); if(S.pop<h) S.pop=Math.min(h, S.pop+Math.max(1,Math.ceil((h-S.pop)*0.08)));
     save();
   }
@@ -1521,7 +1596,8 @@ const CARS={
     desc:'Flies over sea and ice to reach anywhere. Burns fuel quickly.'}
 };
 const carOK=k=>!CARS[k].tech||!!(S&&S.techs[CARS[k].tech]);
-const canEnter=(k,i)=>CARS[k].pass.includes(bkOf(TL[i].rid));
+const snowShut=(k,i)=>k!=='plane'&&!!S&&isWinter()&&bkOf(TL[i].rid)==='hills'&&!(S.car&&bkOf(TL[tI(S.car.x,S.car.y)].rid)==='hills');
+const canEnter=(k,i)=>CARS[k].pass.includes(bkOf(TL[i].rid))&&!snowShut(k,i);
 const needCar=rid=>['wagon','truck','plane'].find(k=>CARS[k].pass.includes(bkOf(rid)));
 
 /* ============ STATE ============ */
@@ -1543,7 +1619,7 @@ function newGame(seed){
     techs:{}, explored:{home:true},
     queue:[], modules:{hull:false,drive:false,life:false,nav:false,cryo:false},
     voyages:[], reached:{}, ships:0,
-    fog, found:DEPT.map((d,j)=>j).filter(j=>DEPT[j].rid==='home'), dud:[],
+    fog, found:DEPT.map((d,j)=>j).filter(j=>DEPT[j].rid==='home'), dud:[], con:{offer:null,active:[],next:8,done:0,failed:0},
     car:{x:TL[st].x,y:TL[st].y,kind:'wagon',dir:1}, odo:0,
     log:[{m:0,t:'January 1900. A mill town, two crews, a Steam Wagon, and a very long way to go.',big:true}]
   };
@@ -1554,7 +1630,7 @@ function migrate(o){ // saves from before the procedural world can't be carried 
   try{ localStorage.setItem(KEY+'-classic',JSON.stringify(o)); }catch(e){}
   OLDSAVE=true; return null;
 }
-newGame.shape=()=>({v:4,fastBuild:true,month:0,day:0,speed:1,uid:1,pop:8,era:0,eraAt:{0:0},res:{},items:{rocket:0},seen:{},bld:{},techs:{},explored:{home:true},queue:[],modules:{hull:false,drive:false,life:false,nav:false,cryo:false},voyages:[],reached:{},ships:0,found:[],dud:[],odo:0,log:[]});
+newGame.shape=()=>({v:4,fastBuild:true,month:0,day:0,speed:1,uid:1,pop:8,era:0,eraAt:{0:0},res:{},items:{rocket:0},seen:{},bld:{},techs:{},explored:{home:true},queue:[],modules:{hull:false,drive:false,life:false,nav:false,cryo:false},voyages:[],reached:{},ships:0,found:[],dud:[],con:{offer:null,active:[],next:8,done:0,failed:0},odo:0,log:[]});
 let OLDSAVE=false;
 let S;
 const ui={screen:'map',view:'earth',sel:'home',placing:null,placeMsg:null,tapMode:'drive',path:[],follow:true,fly:null,sched:false,card:false};
@@ -1587,6 +1663,7 @@ let fogDirty=true, needRender=false;
 const KEYS=new Set();
 function blockMsg(k,i){
   const C=CARS[k], rid=TL[i].rid, need=needCar(rid), where=S.fog[i]?REG[rid].name:'uncharted ground';
+  if(CARS[k].pass.includes(bkOf(rid))&&snowShut(k,i)) return `Snow has closed the passes into ${where} until March. The Survey Plane can still fly over.`;
   return `The ${C.name} can't go into ${where}.${need&&need!==k&&CARS[need].pass.length>C.pass.length?` Needs the ${CARS[need].name}${carOK(need)?' (switch vehicles above)':` (research ${TECHS[CARS[need].tech].name})`}.`:''}`;
 }
 function afterReveal(){
@@ -1820,7 +1897,11 @@ const actions = {
   cancel:d=>{ const i=S.queue.findIndex(q=>q.uid===+d.uid); if(i<0) return; const q=S.queue[i]; refund(q.paid, q.left>=q.total-1e-9?1:0.5); S.queue.splice(i,1); },
   newgame:()=>showModal(`<h3>Start over?</h3><p>This wipes the current colony and returns you to January 1900 in a brand-new world.</p><div class="acts"><button class="ghost" data-act="close">Keep playing</button><button class="btn" data-act="reset">Start a new game</button></div>`),
   reset:()=>{ S=newGame(); syncTiles(); fogDirty=true; Object.assign(ui,{screen:'map',view:'earth',sel:'home',placing:null,placeMsg:null,path:[],follow:true,fly:null,card:false,sched:false}); fogDirty=true; resetCams(); hideModal(); save(); },
-  close:()=>hideModal()
+  contract:d=>{ const C=S.con; if(!C||!C.offer) return hideModal(); const c=C.offer; C.offer=null;
+    if(d.v==='yes'){ c.due=S.month+c.months; C.active.push(c); log(`Contract accepted: ${fmt(c.need)} ${RES[c.k].toLowerCase()} for ${c.who} by ${dateStr(c.due)}.`); }
+    hideModal(); },
+  deliver:d=>deliver(+d.uid),
+  close:()=>{ if(S.con&&S.con.offer){ S.con.offer=null; } hideModal(); }
 };
 function moveQ(uid,dir){ const i=S.queue.findIndex(q=>q.uid===uid), j=i+dir; if(i<0||j<0||j>=S.queue.length) return; [S.queue[i],S.queue[j]]=[S.queue[j],S.queue[i]]; }
 function romanOf(n){ return ['I','II','III','IV','V','VI','VII','VIII','IX','X'][n-1]||String(n); }
@@ -1834,7 +1915,7 @@ document.addEventListener('click',e=>{
 const DIRS={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0],w:[0,-1],s:[0,1],a:[-1,0],d:[1,0],W:[0,-1],S:[0,1],A:[-1,0],D:[1,0]};
 document.addEventListener('keydown',e=>{
   if(e.target.closest('input,textarea,select')) return;
-  if(!modal.hidden) { if(e.key==='Escape'){ hideModal(); } return; }
+  if(!modal.hidden) { if(e.key==='Escape'){ if(S.con&&S.con.offer) S.con.offer=null; hideModal(); } return; }
   if(ui.screen==='map'&&ui.view==='earth'&&DIRS[e.key]){ e.preventDefault(); KEYS.add(e.key); ui.path=[]; ui.follow=true; return; }
   if(ui.screen==='map'&&(e.key==='+'||e.key==='=')){ zoomBy(ui.view,1.4); render(); return; }
   if(ui.screen==='map'&&(e.key==='-'||e.key==='_')){ zoomBy(ui.view,1/1.4); render(); return; }
@@ -1924,6 +2005,9 @@ const GOALS = [
   [()=>Object.keys(S.reached).length>0,'The colonists are in flight. Keep the lights on at home.']
 ];
 const SHORT={money:'$',rp:'Research',wood:'Wood',coal:'Coal',ore:'Ore',iron:'Iron',steel:'Steel',oil:'Oil',fuel:'Fuel',copper:'Copper',concrete:'Concrete',aluminum:'Alum.',electronics:'Electr.',uranium:'Uranium',titanium:'Titan.',he3:'He-3',alloy:'Alloy',zinc:'Zinc',lead:'Lead',tin:'Tin',manganese:'Mangan.',nickel:'Nickel',chromium:'Chrome',tungsten:'Tungst.',lithium:'Lithium',rareearth:'Rare E.',gas:'Gas',stainless:'Stainless',batteries:'Batteries',sand:'Sand',limestone:'Lime',soda:'Soda',boron:'Borax',glass:'Glass',advglass:'Spec. glass',resin:'Resin',fiberglass:'Fiberglass',carbon:'Carbon',neodymium:'Nd',cerium:'Ce',yttrium:'Y',europium:'Eu'};
+function conChip(){ const A=S.con&&S.con.active; if(!A||!A.length) return '';
+  const c=A.slice().sort((a,b)=>a.due-b.due)[0], left=c.due-S.month, ok=(S.res[c.k]||0)>=c.need;
+  return `<button class="rc click ${!ok&&left<=2?'alert':''}" data-act="sched" title="${A.length} contract${A.length>1?'s':''}. Next: ${fmt(c.need)} ${RES[c.k].toLowerCase()} for ${c.who} by ${dateStr(c.due)}"><span class="n">Contract</span>${ok?'<span class="pos">ready</span>':`${left} mo`}</button>`; }
 function renderBanner(){
   const g=GOALS.find(([c])=>!c()); const goal=g?g[1]:'You reached the stars. Build another starship for the next system.';
   const sp=[[0,'❚❚','Pause (Space)'],[1,'1×','1 day every 5 seconds'],[10,'10×','2 days per second'],[100,'100×','20 days per second'],[1000,'1k×','About 6 months per second']];
@@ -1937,12 +2021,13 @@ function renderBanner(){
   const nav=[['colony','Colony'],['map','Map'],['research','Research',avail],['chain','Supply'],['launch','Launch']];
   put('banner',`<div class="bn-row top">
     <div class="bn-brand">${icon('logo')}<b>Steam <span>to</span> Stars</b></div>
-    <div class="bn-date" title="${ERAS[S.era]}"><span class="mon">${MONTHS[S.month%12].toUpperCase()} ${(S.day||0)+1}</span><span class="yr">${yearOf(S.month)}</span><span class="era">${ERAS[S.era]}</span></div>
+    <div class="bn-date" title="${ERAS[S.era]}"><span class="mon">${MONTHS[S.month%12].toUpperCase()} ${(S.day||0)+1}</span><span class="yr">${yearOf(S.month)}</span><button class="season s-${season().id}" data-act="sched" title="${season().name}. ${season().note}">${season().ic} ${season().name}</button><span class="era">${ERAS[S.era]}</span></div>
     <div class="bn-speed" role="group" aria-label="Game speed">${sp.map(([v,l,t])=>`<button data-act="speed" data-v="${v}" aria-pressed="${S.speed===v}" title="${t}" aria-label="${t}">${l}</button>`).join('')}</div>
     <div class="bn-res">
       <button class="rc click" data-act="colony" title="Residents / housing. Open the Colony screen"><span class="n">Pop</span>${S.pop}/${h}</button>
       ${F.demand||F.supply?`<button class="rc click ${prPct<1?'alert':''}" data-act="colony" title="Power supply / demand"><span class="n">Power</span><span class="${prPct<1?'neg':''}">${fmt(F.supply)}/${fmt(F.demand)}</span></button>`:''}
       <button class="rc click ${idle>0?'alert':''}" data-act="sched" aria-expanded="${ui.sched}" title="Work schedule"><span class="n">Crews</span>${busy}/${c}${idle>0?'<span class="d warn">idle</span>':''}</button>
+      ${conChip()}
       ${chips}
     </div>
   </div>
@@ -2076,7 +2161,7 @@ function bTip(rid,id,off){
   if(b.on&&ef&&ef.e<0.999&&(d.workers||d.power||d.in)) l.push(`Running at ${Math.round(ef.e*100)}%${ef.why?`, short on ${ef.why}`:''}`);
   return l.join('|');
 }
-function qTip(q){ const pos=S.queue.indexOf(q); return `Under construction: ${B[q.id].name}|${pos<crews()?`${fmtLeft(q.left)} left`:'Waiting for a free crew'}`; }
+function qTip(q){ const pos=S.queue.indexOf(q); return `Under construction: ${B[q.id].name}|${pos<crews()?`${fmtLeft(q.left/workRate(q))} left${workRate(q)!==1?` (${season().name}: ${Math.round(workRate(q)*100)}% speed)`:''}`:'Waiting for a free crew'}`; }
 function computeObjects(){
   OBJS=[]; OBJAT=new Map(); SEEN=new Set(); VALID=new Map();
   for(let i=0;i<TL.length;i++) if(S.fog[i]) SEEN.add(TL[i].rid);
@@ -2702,13 +2787,15 @@ function renderQueue(id,pop){
   const lab={build:'BUILD',exp:'SURVEY',rocket:'ROCKET',module:'SHIPYARD',project:'PROJECT'};
   const name=q=>q.kind==='build'?`${B[q.id].name} <span style="color:var(--faint);font-weight:400">· ${REG[q.rid].name}</span>`:q.kind==='exp'?REG[q.id].name:q.kind==='rocket'?'Rocket':q.kind==='project'?BREAKS[q.id].name:MODS[q.id].name;
   const ico={build:q=>q.id,exp:()=>'logo',rocket:()=>'launchpad',module:()=>'shipyard',project:()=>'logo'};
-  const items=S.queue.map((q,i)=>{ const on=i<c, p=(1-q.left/q.total)*100;
-    return `<li class="q ${on?'':'wait'}"><div class="q-top">${icon(ico[q.kind](q))}<span class="kind">${lab[q.kind]}</span><span class="q-name">${name(q)}</span><span class="q-left">${on?fmtLeft(q.left):'waiting'}</span></div>
+  const items=S.queue.map((q,i)=>{ const on=i<c, p=(1-q.left/q.total)*100, wr=workRate(q);
+    const wt=Math.abs(wr-1)>.01?`<span class="wx ${wr<1?'slow':'fast'}" title="${season().name}: this job runs at ${Math.round(wr*100)}% speed">${season().ic} ${Math.round(wr*100)}%</span>`:'';
+    return `<li class="q ${on?'':'wait'}"><div class="q-top">${icon(ico[q.kind](q))}<span class="kind">${lab[q.kind]}</span><span class="q-name">${name(q)}${wt}</span><span class="q-left">${on?fmtLeft(q.left/wr):'waiting'}</span></div>
     <div class="q-bot"><div class="prog"><i style="width:${p.toFixed(1)}%"></i></div>
     <button class="ic" data-act="up" data-uid="${q.uid}" ${i===0?'disabled':''} aria-label="Move up">▲</button>
     <button class="ic" data-act="down" data-uid="${q.uid}" ${i===S.queue.length-1?'disabled':''} aria-label="Move down">▼</button>
     <button class="ic" data-act="cancel" data-uid="${q.uid}" aria-label="Cancel" title="${q.left>=q.total-1e-9?'Full refund':'Half refund'}">✕</button></div></li>`; }).join('');
   put(id,`<div class="ph"><h2>Work schedule</h2><span class="crews">${Math.min(c,S.queue.length)}/${c} crews busy</span>${pop?'<button class="ic" data-act="sched" aria-label="Close" style="width:28px;height:26px">✕</button>':''}</div>
+  ${seasonHTML()}${contractsHTML()}
   ${items?`<ol>${items}</ol>`:'<p class="empty">No projects scheduled. Idle crews are wasted months.</p>'}`);
 }
 function renderLog(){
@@ -2720,7 +2807,7 @@ function renderLog(){
 let acc=0, last=performance.now();
 function loop(){
   const now=performance.now(); const dt=Math.min(1000,now-last); last=now;
-  if(S.speed&&modal.hidden){ acc+=dt*S.speed; let n=0; while(acc>=5000&&n<40){ acc-=5000; tick(); n++; } if(n>=40) acc=0; if(n) render(); }
+  if(S.speed&&modal.hidden){ acc+=dt*S.speed; let n=0; while(acc>=5000&&n<40&&modal.hidden){ acc-=5000; tick(); n++; } if(n>=40) acc=0; if(n) render(); }
 }
 function frame(now){
   requestAnimationFrame(frame);
