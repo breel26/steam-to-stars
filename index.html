@@ -690,6 +690,9 @@ const DEPOSITS = {forest:'Timber stands', coal:'Coal seams', iron:'Iron ore beds
   lithium:'Lithium brine', rareearth:'Rare-earth ore', gas:'Gas fields', hydro:'River falls', wind:'Windy ridges', geo:'Geothermal vents', tidal:'Tidal races',
   sand:'Silica sand', limestone:'Limestone beds', soda:'Trona (soda ash)', boron:'Borax beds'};
 const ENERGY_SITES=['hydro','wind','geo','tidal'];
+// Prospecting: every mineral site has a hidden grade, and some glints are false alarms
+const GRADES={rich:{x:1.5,name:'Rich'},std:{x:1,name:'Fair'},thin:{x:0.6,name:'Thin'}};
+const DUDNAMES=["fool's gold","a vein of mica","wet quartz catching the light","an old tin can","a puddle of meltwater","glittering pyrite","a seam of worthless shale","an abandoned prospector's pan"];
 const DEPCOL = {forest:'#8cc873',coal:'#b3aea4',iron:'#e0906f',oil:'#e8bf55',copper:'#5fd0b2',bauxite:'#eaa7c6',uranium:'#bfe860',titanium:'#c9d3e2',he3:'#9fd6ff',
   zinc:'#b9c6d2',lead:'#8890b0',tin:'#e6dfc8',manganese:'#c97b9b',nickel:'#a8c98f',chromium:'#d08fe0',tungsten:'#e0b066',lithium:'#eef4ff',rareearth:'#b58cff',
   gas:'#ffcf8a',hydro:'#6fd6ff',wind:'#f0f6ff',geo:'#ff8a5a',tidal:'#4fa8ff',
@@ -800,7 +803,7 @@ const TECHS = {
   pyrex:{name:'Borosilicate & Optical Glass',f:'chem',era:1,cost:200,req:['periodic','elec'],hist:'1915',fx:{rp:.05},desc:"Corning's borosilicate shrugs off heat shock, and precision optical glass follows."},
   stainless:{name:'Stainless Steel',f:'chem',era:1,cost:180,req:['bessemer','periodic'],hist:'1913',fx:{industry:.1},desc:'Chromium alloys that do not rust.'},
   haber:{name:'Haber–Bosch Process',f:'chem',era:1,cost:200,req:['periodic','elec'],hist:'1909',fx:{housing:.15},desc:'Nitrogen from the air becomes fertilizer, and the same land feeds far more people.'},
-  vacuum:{name:'Vacuum Tubes',f:'elec',era:1,cost:220,req:['elec','electron'],hist:'1906',fx:{},desc:"De Forest's triode amplifies signals. Electronics begins."},
+  vacuum:{name:'Vacuum Tubes',f:'elec',era:1,cost:220,req:['elec','electron'],hist:'1906',fx:{},desc:"De Forest's triode amplifies signals. Electronics begins. Magnetometer surveys tell real glints from false ones."},
   assembly:{name:'Assembly Line',f:'eng',era:1,cost:220,req:['elec','ice'],hist:'1913',fx:{build:.15,industry:.1},desc:'Ford builds a Model T every few minutes.'},
   radio:{name:'Radio Broadcasting',f:'elec',era:1,cost:200,req:['vacuum'],hist:'1920',fx:{money:.1},desc:'News and advertising reach every home at once.'},
   genrel:{name:'General Relativity',f:'phys',era:1,cost:300,req:['specrel'],hist:'1915',fx:{rp:.1},desc:'Gravity is the curvature of spacetime. Precise orbits need it.'},
@@ -808,7 +811,7 @@ const TECHS = {
   qm:{name:'Quantum Mechanics',f:'phys',era:2,cost:400,req:['quantum','specrel'],hist:'1925',fx:{rp:.15},desc:'Heisenberg, Schrödinger and Dirac write down the rules of the atom.'},
   antibiotics:{name:'Antibiotics',f:'bio',era:2,cost:300,req:['germ'],hist:'1928',fx:{housing:.1},desc:'Fleming notices mould killing bacteria. Penicillin saves millions.'},
   polymers:{name:'Nylon & Polymers',f:'chem',era:2,cost:350,req:['plastics'],hist:'1935',fx:{cost:.05},desc:'Carothers designs molecules to order: nylon, then a flood of synthetics.'},
-  radar:{name:'Radar',f:'elec',era:2,cost:400,req:['radio'],hist:'1935',fx:{sight:1},desc:'Radio echoes locate things far beyond sight.'},
+  radar:{name:'Radar',f:'elec',era:2,cost:400,req:['radio'],hist:'1935',fx:{sight:1},desc:'Radio echoes locate things far beyond sight. Survey readings show how rich a glint is before you drive to it.'},
   nucleus:{name:'Nuclear Physics',f:'phys',era:2,cost:450,req:['qm','xrays'],hist:'1932',fx:{},desc:'Chadwick finds the neutron. The nucleus can now be probed and split.'},
   gasturbine:{name:'Gas Turbines',f:'energy',era:2,cost:700,req:['jet','petroleum'],hist:'1939',fx:{},desc:'Jet engines bolted to the ground: fast-starting power from natural gas.'},
   tidalpower:{name:'Tidal Power',f:'energy',era:2,cost:800,req:['hydropower','stainless'],hist:'1966',fx:{},desc:'The Rance barrage in Brittany runs turbines on the rise and fall of the sea.'},
@@ -987,7 +990,7 @@ const icon=(k,cls='')=>`<img class="px ${cls}" src="${sprURL(k)}" alt="">`;
 
 /* ============ EARTH: PROCEDURAL WORLD ============ */
 const TS=64, MWT=160, MHT=90, WPX=MWT*TS, HPX=MHT*TS;
-const TL=[], RT={}, DEPT=[], DEPAT=new Map(), RIVERS=[], RIVER=new Set(), RESV=new Set();
+const TL=[], RT={}, DEPT=[], DEPAT=new Map(), DUD=[], DUDAT=new Map(), RIVERS=[], RIVER=new Set(), RESV=new Set();
 let SEED=1, SEA=.5, ELEV=null, BT=null, BIOME_ORDER=['plains','woods','hills','delta','canyon','desert','highlands','arctic','ocean'];
 const tI=(x,y)=>y*MWT+x;
 const inB=(x,y)=>x>=0&&y>=0&&x<MWT&&y<MHT;
@@ -1048,7 +1051,7 @@ const NAMES={
 };
 function genWorld(seed){
   SEED=seed|0; const R=rng(seed);
-  TL.length=0; DEPT.length=0; DEPAT.clear(); RIVERS.length=0; RIVER.clear(); RESV.clear(); for(const k in RT) delete RT[k];
+  TL.length=0; DEPT.length=0; DEPAT.clear(); DUD.length=0; DUDAT.clear(); RIVERS.length=0; RIVER.clear(); RESV.clear(); for(const k in RT) delete RT[k];
   for(const k of EARTH) delete REG[k]; EARTH.length=0;
   // ---- terrain ----
   ELEV=new Float32Array(MWT*MHT);
@@ -1177,6 +1180,16 @@ function genWorld(seed){
     RT[id].open=RT[id].tiles.filter(i=>i!==RT[id].anchor&&!TL[i].oc&&!RIVER.has(i)&&!DEPAT.has(i));
     REG[id].plots=RT[id].open.length; }
   for(const d of DEPT) RESV.add(d.i);
+  // ---- prospecting: a hidden grade for each mineral site, plus false glints (own rng so the map is unchanged) ----
+  DEPT.forEach((d,j)=>{ const u=ihash(j,d.i,(seed^0x6a7e51)|0);
+    d.g=(d.rid==='home'||ENERGY_SITES.includes(d.k))?'std':u<.22?'rich':u<.70?'std':'thin'; });
+  { const RD=rng((seed^0xd0d0f00d)>>>0);
+    for(const id of EARTH){ if(id==='home'||REG[id].bk==='ocean') continue;
+      const real=DEPT.filter(d=>d.rid===id).length, want=Math.floor(real*.35+RD()*1.2);
+      const cand=RT[id].open.slice().sort((a,b)=>ihash(a,23,SEED)-ihash(b,23,SEED));
+      const near=(i,gap)=>DEPT.concat(DUD).some(d=>Math.max(Math.abs(TL[d.i].x-TL[i].x),Math.abs(TL[d.i].y-TL[i].y))<gap);
+      let n=0; for(const gap of [3,2]) for(const i of cand){ if(n>=want) break; if(DUDAT.has(i)||near(i,gap)) continue;
+        DUDAT.set(i,DUD.length); DUD.push({i,rid:id,t:DUDNAMES[Math.floor(RD()*DUDNAMES.length)]}); n++; } } }
   // ---- region outlines (world pixels) ----
   for(const id of EARTH){ const Rg=RT[id]; let d='';
     for(const i of Rg.tiles){ const {x,y}=TL[i], X=x*TS, Y=y*TS;
@@ -1432,7 +1445,8 @@ function flows(fr=1){
   const st={...S.res};
   const fx=allFx(), gm=1+(fx.all||0);
   const items=[];
-  for(const rid in S.bld) for(const id of ORDER){ const b=S.bld[rid][id]; if(b&&b.n) items.push({rid,id,b,d:B[id],x:bonusX(rid,id)}); }
+  GM=gradeMap();
+  for(const rid in S.bld) for(const id of ORDER){ const b=S.bld[rid][id]; if(b&&b.n) items.push({rid,id,b,d:B[id],x:bonusX(rid,id)*(GM[rid+':'+id]||1)}); }
   let jobs=0; for(const it of items) if(it.d.workers) jobs+=it.b.on*it.d.workers;
   const staff = jobs>0?Math.min(1,S.pop/jobs):1;
   const employed = Math.min(S.pop,jobs);
@@ -1529,7 +1543,7 @@ function newGame(seed){
     techs:{}, explored:{home:true},
     queue:[], modules:{hull:false,drive:false,life:false,nav:false,cryo:false},
     voyages:[], reached:{}, ships:0,
-    fog, found:DEPT.map((d,j)=>j).filter(j=>DEPT[j].rid==='home'),
+    fog, found:DEPT.map((d,j)=>j).filter(j=>DEPT[j].rid==='home'), dud:[],
     car:{x:TL[st].x,y:TL[st].y,kind:'wagon',dir:1}, odo:0,
     log:[{m:0,t:'January 1900. A mill town, two crews, a Steam Wagon, and a very long way to go.',big:true}]
   };
@@ -1540,7 +1554,7 @@ function migrate(o){ // saves from before the procedural world can't be carried 
   try{ localStorage.setItem(KEY+'-classic',JSON.stringify(o)); }catch(e){}
   OLDSAVE=true; return null;
 }
-newGame.shape=()=>({v:4,fastBuild:true,month:0,day:0,speed:1,uid:1,pop:8,era:0,eraAt:{0:0},res:{},items:{rocket:0},seen:{},bld:{},techs:{},explored:{home:true},queue:[],modules:{hull:false,drive:false,life:false,nav:false,cryo:false},voyages:[],reached:{},ships:0,found:[],odo:0,log:[]});
+newGame.shape=()=>({v:4,fastBuild:true,month:0,day:0,speed:1,uid:1,pop:8,era:0,eraAt:{0:0},res:{},items:{rocket:0},seen:{},bld:{},techs:{},explored:{home:true},queue:[],modules:{hull:false,drive:false,life:false,nav:false,cryo:false},voyages:[],reached:{},ships:0,found:[],dud:[],odo:0,log:[]});
 let OLDSAVE=false;
 let S;
 const ui={screen:'map',view:'earth',sel:'home',placing:null,placeMsg:null,tapMode:'drive',path:[],follow:true,fly:null,sched:false,card:false};
@@ -1553,7 +1567,19 @@ const CHART=0.35;
 const chartPct=rid=>{ const t=RT[rid].tiles; let n=0; for(const i of t) if(S.fog[i]) n++; return n/t.length; };
 const detectable=j=>bkOf(DEPT[j].rid)!=='ocean'||T('computing');
 function depCap(rid,k){ if(REG[rid].where==='space') return isExplored(rid)?(REG[rid].dep[k]||0):0; let n=0; for(const j of S.found) if(DEPT[j].rid===rid&&DEPT[j].k===k) n++; return n; }
-const foundOf=(rid,k)=>S.found.filter(j=>DEPT[j].rid===rid&&DEPT[j].k===k);
+const foundOf=(rid,k)=>S.found.filter(j=>DEPT[j].rid===rid&&DEPT[j].k===k).sort((a,b)=>GRADES[DEPT[b].g].x-GRADES[DEPT[a].g].x);
+const hiddenDud=i=>DUDAT.has(i)&&!S.dud.includes(DUDAT.get(i));
+const survey=()=>T('radar')?2:T('vacuum')?1:0; // 0: glints only, 1: tell real from false, 2: also judge the grade
+const gradeOf=j=>GRADES[DEPT[j].g||'std'];
+const gradeWord=j=>{ const g=DEPT[j].g; return g==='rich'?'Rich site: +50% output':g==='thin'?'Thin site: 60% output':'Fair site: normal output'; };
+function gradeMap(){ // average grade of the switched-on extractors, per region:building
+  const sum={}, cnt={};
+  for(const k of Object.keys(S.at||{}).sort((a,b)=>a-b)){ const {id,rid}=S.at[k], d=B[id], b=S.bld[rid]&&S.bld[rid][id];
+    if(!b||!d.deposit||ENERGY_SITES.includes(d.deposit)) continue; const key=rid+':'+id; if((cnt[key]||0)>=b.on) continue;
+    const j=DEPAT.get(+k); sum[key]=(sum[key]||0)+(j!=null?gradeOf(j).x:1); cnt[key]=(cnt[key]||0)+1; }
+  const m={}; for(const key in cnt){ const b=S.bld[key.split(':')[0]][key.split(':')[1]]; m[key]=(sum[key]+Math.max(0,b.on-cnt[key]))/Math.max(1,b.on); }
+  return m; }
+let GM={};
 const carTile=()=>tI(S.car.x,S.car.y);
 const carUse=k=>Math.round(CARS[k].use*(1-Math.min(.6,allFx().fuel||0))*100)/100;
 const mv={from:null,t0:0,dur:1};
@@ -1565,8 +1591,14 @@ function blockMsg(k,i){
 }
 function afterReveal(){
   const {x,y}=S.car, C=CARS[S.car.kind], r=S.car.kind==='plane'?2:1, msgs=[];
-  DEPT.forEach((d,j)=>{ if(S.found.includes(j)||!detectable(j)||!S.fog[d.i]) return; const t=TL[d.i];
-    if(Math.max(Math.abs(t.x-x),Math.abs(t.y-y))<=r){ S.found.push(j); const m=`Found ${DEPOSITS[d.k].toLowerCase()} in ${REG[d.rid].name}!`; log(m,true); msgs.push(m); } });
+  const nearCar=i=>{ const t=TL[i]; return Math.max(Math.abs(t.x-x),Math.abs(t.y-y))<=r; };
+  DEPT.forEach((d,j)=>{ if(S.found.includes(j)||!detectable(j)||!S.fog[d.i]||!nearCar(d.i)) return;
+    S.found.push(j); const nm=DEPOSITS[d.k].toLowerCase(), where=REG[d.rid].name;
+    const m=d.g==='rich'?`Rich strike! ${DEPOSITS[d.k]} in ${where}. This site produces +50%.`
+      :d.g==='thin'?`Found ${nm} in ${where}, but the vein is thin (60% output).`:`Found ${nm} in ${where}!`;
+    log(m,true); msgs.push(m); });
+  DUD.forEach((d,n)=>{ if(S.dud.includes(n)||!S.fog[d.i]||!nearCar(d.i)||occupied(d.i)) return;
+    S.dud.push(n); const m=`The glint in ${REG[d.rid].name} was just ${d.t}.`; log(m); msgs.push(m); });
   for(const rid of EARTH){ if(isExplored(rid)||chartPct(rid)<CHART) continue; S.explored[rid]=true; const R=REG[rid];
     const m=`${R.name} charted.${R.plots?` ${R.plots} building plots open.`:''}`; log(m,true); msgs.push(m); }
   if(msgs.length) toast(msgs.join(' '));
@@ -1690,6 +1722,7 @@ function tileWhy(id,i){
   if(occupied(i)) return 'Something is already built there.';
   if(d.deposit){ if(!openSite(i,d.deposit)) return `Click an open ${DEPOSITS[d.deposit].toLowerCase()} site (the glowing icons).`; }
   else if(DEPAT.has(i)) return S.found.includes(DEPAT.get(i))?'That spot is a deposit site. Save it for a mine.':'Something glints there. Drive next to it first.';
+  else if(hiddenDud(i)) return 'Something glints there. Drive next to it first.';
   else if(RIVER.has(i)) return 'Nothing can be built on the river except a Hydroelectric Dam.';
   return null;
 }
@@ -1702,8 +1735,8 @@ function snapTile(id,i){ // extractors: forgive a click one tile away from the s
 function autoTile(id,rid){ // used by "Build here" buttons and old saves
   if(REG[rid].where!=='earth') return null; const d=B[id], R=RT[rid];
   if(d.deposit){ const s=foundOf(rid,d.deposit).map(j=>DEPT[j].i).find(i=>!occupied(i)); if(s!=null) return s; }
-  else { const p=R.plots.find(i=>!occupied(i)&&!DEPAT.has(i)); if(p!=null) return p; }
-  const f=R.tiles.find(i=>!occupied(i)&&!DEPAT.has(i)&&!RIVER.has(i)&&i!==R.anchor); return f==null?null:f;
+  else { const p=R.plots.find(i=>!occupied(i)&&!DEPAT.has(i)&&!hiddenDud(i)); if(p!=null) return p; }
+  const f=R.tiles.find(i=>!occupied(i)&&!DEPAT.has(i)&&!hiddenDud(i)&&!RIVER.has(i)&&i!==R.anchor); return f==null?null:f;
 }
 function syncTiles(){ // make sure every Earth building and scaffold has a tile
   if(!S.at) S.at={};
@@ -2039,6 +2072,7 @@ function bTip(rid,id,off){
   const d=B[id], b=S.bld[rid][id], ef=F&&F.eff[rid+':'+id], x=bonusX(rid,id);
   const l=[(off?'Switched off: ':'')+d.name, ioText(d).replace(/<[^>]+>/g,''), `${b.on} of ${b.n} switched on in ${REG[rid].name}`];
   if(x>1) l.push(`+${Math.round((x-1)*100)}% from ${REG[rid].name}`);
+  { const gx=GM[rid+':'+id]; if(gx&&Math.abs(gx-1)>.005) l.push(`${gx>1?'+':''}${Math.round((gx-1)*100)}% from site grade`); }
   if(b.on&&ef&&ef.e<0.999&&(d.workers||d.power||d.in)) l.push(`Running at ${Math.round(ef.e*100)}%${ef.why?`, short on ${ef.why}`:''}`);
   return l.join('|');
 }
@@ -2055,8 +2089,14 @@ function computeObjects(){
     add(+k,{s:id,dim:off,tip:bTip(rid,id,off)}); }
   for(const q of S.queue) if(q.kind==='build'&&q.tile!=null) add(q.tile,{s:'scaffold',tip:qTip(q)});
   for(const j of S.found){ const d=DEPT[j]; if(OBJAT.has(d.i)) continue; const ex=ORDER.find(id=>B[id].deposit===d.k);
-    add(d.i,{s:'ore_'+d.k,tip:`Open site: ${DEPOSITS[d.k]}|${REG[d.rid].name}|Build a ${B[ex].name} here${B[ex].tech&&!T(B[ex].tech)?` (needs ${TECHS[B[ex].tech].name})`:''}`}); }
-  DEPT.forEach((d,j)=>{ if(!S.found.includes(j)&&S.fog[d.i]&&detectable(j)&&!OBJAT.has(d.i)) add(d.i,{s:'sparkle',tip:'Something glints here|Drive next to it to find out what it is'}); });
+    add(d.i,{s:'ore_'+d.k,g:d.g,tip:`Open site: ${DEPOSITS[d.k]}|${REG[d.rid].name}|${ENERGY_SITES.includes(d.k)?'':gradeWord(j)+'|'}Build a ${B[ex].name} here${B[ex].tech&&!T(B[ex].tech)?` (needs ${TECHS[B[ex].tech].name})`:''}`}); }
+  const sv=survey();
+  const glintTip=g=>sv===0?'Something glints here|Could be a rich find, a thin one, or nothing at all|Drive next to it to find out'
+    :sv===1?'Survey: a real deposit|Grade unknown. Drive next to it to find out what it is'
+    :g==='rich'?'Survey: a strong reading|Likely a rich deposit. Drive next to it to claim it'
+    :g==='thin'?'Survey: a weak reading|Likely a thin deposit':'Survey: a steady reading|Likely a fair deposit';
+  DEPT.forEach((d,j)=>{ if(!S.found.includes(j)&&S.fog[d.i]&&detectable(j)&&!OBJAT.has(d.i)) add(d.i,{s:'sparkle',gv:sv===2?d.g:'std',tip:glintTip(d.g)}); });
+  DUD.forEach((d,n)=>{ if(!S.dud.includes(n)&&S.fog[d.i]&&!OBJAT.has(d.i)&&!occupied(d.i)) add(d.i,{s:'sparkle',gv:sv?'dud':'std',tip:sv?"Survey: false glint|Instruments read nothing here. Probably fool's gold":glintTip()}); });
   OBJS_SORTED=OBJS.slice().sort((a,b)=>a.i-b.i);
 }
 
@@ -2103,10 +2143,12 @@ function carPos(now){ const t=Math.min(1,(now-mv.t0)/mv.dur), f=mv.from||[S.car.
 const GLOWCOL={forest:'255,211,138',coal:'188,210,255',iron:'255,176,138',oil:'255,216,120',copper:'120,240,210',bauxite:'255,180,210',uranium:'200,255,110',titanium:'220,230,255',he3:'170,220,255',zinc:'200,215,235',lead:'160,170,220',tin:'240,232,200',manganese:'230,150,190',nickel:'180,230,150',chromium:'220,150,255',tungsten:'255,200,120',lithium:'230,245,255',rareearth:'190,150,255',gas:'255,200,120',hydro:'120,220,255',wind:'235,245,255',geo:'255,140,90',tidal:'110,180,255',sand:'255,230,170',limestone:'235,235,225',soda:'250,245,230',boron:'255,215,235'};
 function drawSprite(g,img,cx,base,alpha){ if(!img) return; const f=img.width<=16?3:1, w=img.width*f, h=img.height*f;
   if(alpha!=null) g.globalAlpha=alpha; g.drawImage(img,Math.round(cx-w/2),Math.round(base-h),w,h); g.globalAlpha=1; }
-function drawGlint(g,cx,cy,now,seed){ const t=(now/900+seed*0.37)%1, s=.55+.45*Math.sin(t*Math.PI*2), r=5+9*s;
-  g.save(); g.globalAlpha=.25+.55*s; g.fillStyle='#fff6c0';
+function drawGlint(g,cx,cy,now,seed,gv){ const dud=gv==='dud', t=(now/(dud?2200:900)+seed*0.37)%1, s=.55+.45*Math.sin(t*Math.PI*2);
+  const r=(gv==='rich'?8:gv==='thin'?4:dud?3:5)+(gv==='rich'?12:gv==='thin'?5:dud?4:9)*s;
+  g.save(); if(gv==='rich'){ const gr=g.createRadialGradient(cx,cy,1,cx,cy,22); gr.addColorStop(0,`rgba(255,214,90,${.5*s})`); gr.addColorStop(1,'rgba(255,214,90,0)'); g.fillStyle=gr; g.fillRect(cx-22,cy-22,44,44); }
+  g.globalAlpha=dud?.3+.2*s:gv==='thin'?.35+.4*s:.25+.55*s; g.fillStyle=dud?'#aeb4be':gv==='rich'?'#ffd65a':'#fff6c0';
   g.fillRect(Math.round(cx-1),Math.round(cy-r),2,Math.round(r*2)); g.fillRect(Math.round(cx-r),Math.round(cy-1),Math.round(r*2),2);
-  g.fillStyle='#ffffff'; g.fillRect(Math.round(cx-2),Math.round(cy-2),4,4);
+  g.fillStyle=dud?'#9aa0a8':'#ffffff'; g.fillRect(Math.round(cx-2),Math.round(cy-2),4,4);
   g.globalAlpha=.35*s; g.fillRect(Math.round(cx-r*.55),Math.round(cy-r*.55),2,2); g.fillRect(Math.round(cx+r*.55-2),Math.round(cy+r*.55-2),2,2); g.restore(); }
 function drawStake(g,X,Y){ g.fillStyle='rgba(246,241,230,.75)'; const a=8,b=56,L=12,w=3;
   for(const [x,y,sx,sy] of [[a,a,1,1],[b,a,-1,1],[a,b,1,-1],[b,b,-1,-1]]){ g.fillRect(X+(sx>0?x:x-L),Y+(sy>0?y:y-w),L,w); g.fillRect(X+(sx>0?x:x-w),Y+(sy>0?y:y-L),w,L); }
@@ -2118,11 +2160,13 @@ function drawEarth(g,now,k){
     const gr=g.createRadialGradient(cx,cy,2,cx,cy,30); gr.addColorStop(0,`rgba(${col},${.55*pulse})`); gr.addColorStop(1,`rgba(${col},0)`);
     g.fillStyle=gr; g.beginPath(); g.ellipse(cx,cy,30,20,0,0,7); g.fill(); }
   for(const o of OBJS_SORTED){ if(!S.fog[o.i]) continue; const {x,y}=TL[o.i], X=x*TS, Y=y*TS;
-    if(o.s==='sparkle'){ drawGlint(g,X+32,Y+34,now,o.i); continue; }
+    if(o.s==='sparkle'){ drawGlint(g,X+32,Y+34,now,o.i,o.gv); continue; }
     if(o.s==='stake'){ drawStake(g,X,Y); continue; }
     const img=SPR[o.s]; if(!img) continue;
     if(!o.s.startsWith('ore_')){ g.fillStyle='rgba(0,0,0,.22)'; g.beginPath(); g.ellipse(X+32,Y+57,Math.min(30,(img.width<=16?48:img.width)/2),6,0,0,7); g.fill(); }
-    drawSprite(g,img,X+32,o.s.startsWith('ore_')?Y+54:Y+60,o.dim?.45:null); }
+    drawSprite(g,img,X+32,o.s.startsWith('ore_')?Y+54:Y+60,o.dim?.45:null);
+    if(o.g&&o.g!=='std'){ const n=o.g==='rich'?3:1, col=o.g==='rich'?'#ffd65a':'#9aa0a8'; g.fillStyle='rgba(0,0,0,.45)'; g.fillRect(X+31-n*5,Y+3,n*10+2,9); g.fillStyle=col;
+      for(let q=0;q<n;q++){ const sx=X+33-n*5+q*10; if(o.g==='rich') g.fillRect(sx+2,Y+4,2,7); g.fillRect(sx,Y+6,6,3); } } }
   if(ui.path.length){ g.fillStyle='rgba(255,226,122,.95)'; for(const i of ui.path){ const {x,y}=TL[i]; g.fillRect(x*TS+30,y*TS+30,5,5); }
     const e=TL[ui.path[ui.path.length-1]]; drawStake(g,e.x*TS,e.y*TS); }
   drawFog(g,k);
@@ -2299,7 +2343,8 @@ function mapKey(){
   return `<p class="desc">Hover or tap anything on the map for details.</p><div class="kgrid">
     <div class="kcol"><div class="sub">Exploring</div>
       ${row(icon('car_wagon'),'Your vehicle','Tap the map or use arrow keys to drive. Reveals land as it goes')}
-      ${row(icon('sparkle0'),'Glint','An undiscovered deposit. Drive next to it to find out what it is')}
+      ${row(icon('sparkle0'),'Glint','Maybe a deposit, maybe nothing. Drive next to it to find out. Vacuum Tubes spot false glints; Radar shows how rich a glint is')}
+      ${row('<b style="color:#ffd65a">+++</b>','Rich site','Mines on it make +50%. A grey − mark means a thin site (60%)')}
       ${row(fog,'Fog','Uncharted land. Reveal a third of a region to chart it and open its plots')}
       ${row(icon('town'),'Town hall','Mill Valley, where you start')}
       ${row(icon('scaffold'),'Scaffolding','Under construction')}
@@ -2311,7 +2356,7 @@ function depRows(rid){
   const R=REG[rid], earth=R.where==='earth';
   return Object.entries(R.dep).map(([k,v])=>{
     let val;
-    if(earth){ const f=depCap(rid,k), hid=v-f; val=`${f?`${sitesUsed(rid,k)}/${f} used`:'none found'}${hid?` · ${hid} hidden`:''}`; if(bkOf(rid)==='ocean'&&!T('computing')&&hid) val+=' (needs sonar)'; }
+    if(earth){ const f=depCap(rid,k), hid=v-f, fs=foundOf(rid,k), nr=fs.filter(j=>DEPT[j].g==='rich').length, nt=fs.filter(j=>DEPT[j].g==='thin').length; val=`${f?`${sitesUsed(rid,k)}/${f} used`:'none found'}${nr?` · ${nr} rich`:''}${nt?` · ${nt} thin`:''}${hid?` · ${hid} hidden`:''}`; if(bkOf(rid)==='ocean'&&!T('computing')&&hid) val+=' (needs sonar)'; }
     else val=isExplored(rid)?`${sitesUsed(rid,k)}/${v} used`:'?';
     return `<div class="row"><span class="k"><i class="dot" style="background:${DEPCOL[k]}"></i>${DEPOSITS[k]}</span><span class="v">${val}</span></div>`; }).join('');
 }
@@ -2342,7 +2387,8 @@ function detail(){
   const here=ORDER.filter(id=>nAt(rid,id)).map(id=>{ const d=B[id], b=S.bld[rid][id], ef=F.eff[rid+':'+id], x=bonusX(rid,id);
     const warn=b.on&&ef&&ef.e<0.999&&(d.workers||d.power||d.in)?`<p class="why">Running at ${Math.round(ef.e*100)}%${ef.why?`, short on ${ef.why}`:''}.</p>`:'';
     const tog=(d.workers||d.power)?`<div class="stepper"><button data-act="on" data-rid="${rid}" data-id="${id}" data-d="-1" ${b.on<=0?'disabled':''} aria-label="Switch one off">−</button><span>${b.on}/${b.n} on</span><button data-act="on" data-rid="${rid}" data-id="${id}" data-d="1" ${b.on>=b.n?'disabled':''} aria-label="Switch one on">+</button></div>`:`<span class="count">×${b.n}</span>`;
-    return `<div class="hb"><span class="nm">${icon(id)}${d.name}${x>1?`<small class="pos">+${Math.round((x-1)*100)}%</small>`:''}</span>${tog}${warn}</div>`; }).join('');
+    const gx=GM[rid+':'+id]||1, gt=Math.abs(gx-1)>.005?`<small class="${gx>1?'pos':'neg'}">${gx>1?'+':''}${Math.round((gx-1)*100)}% grade</small>`:'';
+    return `<div class="hb"><span class="nm">${icon(id)}${d.name}${x>1?`<small class="pos">+${Math.round((x-1)*100)}%</small>`:''}${gt}</span>${tog}${warn}</div>`; }).join('');
   const qd=S.queue.filter(q=>q.kind==='build'&&q.rid===rid).map(q=>`<div class="hb"><span class="nm">${icon('scaffold')}${B[q.id].name}<small>building</small></span><span class="time">${fmtLeft(q.left)}</span></div>`).join('');
   left+=`<div class="sub">Buildings here</div><div>${here+qd||'<p class="desc">Nothing built here yet.</p>'}</div></div>`;
   const opts=ORDER.filter(id=>{ const d=B[id]; if(d.tech&&!T(d.tech)) return false; if(d.max&&nOf(id)&&!nAt(rid,id)) return false;
